@@ -109,6 +109,50 @@ export default class Grid extends cc.Component {
         return this.parentNode1;
     } 
 
+    public getConnectedCellsOfSameType(mouseEvent: cc.Event.EventMouse): Cell[] {
+        const startCell = this.getCellAtMousePosition(mouseEvent);
+        if (!startCell || !startCell.getBlock()) return [];
+
+        const startBlock = startCell.getBlock();
+        const targetType = startBlock.blockType;
+        const visited = new Set<Cell>();
+        const stack: Cell[] = [startCell];
+        const connected: Cell[] = [];
+
+        while (stack.length > 0) {
+            const current = stack.pop();
+            if (!current || visited.has(current)) continue;
+            visited.add(current);
+
+            const coords = this.getCellCoords(current);
+            if (!coords) continue;
+
+            const { x: col, y: row } = coords;
+
+            const neighbors = [
+                this.getCellAt(row - 1, col),
+                this.getCellAt(row + 1, col),
+                this.getCellAt(row, col - 1),
+                this.getCellAt(row, col + 1),
+            ];
+
+            for (const neighbor of neighbors) {
+                if (
+                    neighbor &&
+                    !visited.has(neighbor) &&
+                    neighbor.isOccupied() &&
+                    neighbor.getBlock().blockType === targetType
+                ) {
+                    stack.push(neighbor);
+                }
+            }
+
+            connected.push(current);
+        }
+
+        return connected;
+    }
+
     private getGridOffset(): { offsetX: number, offsetY: number } {
         const offsetX = ((this.width - 1) * this.cellSize) / 2;
         const offsetY = ((this.height - 1) * this.cellSize) / 2;

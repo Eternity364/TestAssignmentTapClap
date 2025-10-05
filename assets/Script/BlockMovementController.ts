@@ -66,7 +66,6 @@ export default class BlockMovementController extends cc.Component {
     private spawnNewBlocks(width: number, height: number) {
         const blocksPerColumn = this.getNumberOfBlocksInGridPerColumn();
 
-        let counter = 0;
         for (let col = 0; col < width; col++) {
             const missingBlocks = height - blocksPerColumn[col] - this.fallingBlocks.filter(fb => fb.col === col).length;
             
@@ -79,10 +78,8 @@ export default class BlockMovementController extends cc.Component {
                 block.node.position = cc.v3(targetPos.x, spawnY, 0);
 
                 this.fallingBlocks.push({ block, col });
-                counter++;
             }
         }
-        cc.log("Spawned = " + counter);
     }
 
     private moveExistingBlocksDown(width: number, height: number): number[] {
@@ -150,7 +147,6 @@ export default class BlockMovementController extends cc.Component {
                     counter++;
                 }
             }
-            cc.log("Counter = " + counter);
         }
     }
 

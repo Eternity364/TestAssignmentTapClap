@@ -17,12 +17,13 @@ export default class BlockManager extends cc.Component {
     private onMouseDown(event: cc.Event.EventMouse) {
         if (!this.grid) return;
 
-        const cell: Cell = this.grid.getCellAtMousePosition(event);
-        if (cell && cell.getBlock()) {
-            const block: Block = cell.getBlock();
-            block.node.destroy();
-            cell.setBlock(null);
-            this.node.emit('OnBlocksDestroy', this);
+        const cells: Cell[] = this.grid.getConnectedCellsOfSameType(event);
+        for (let index = 0; index < cells.length; index++) {
+                const cell = cells[index];
+                const block: Block = cell.getBlock();
+                block.node.destroy();
+                cell.setBlock(null);
         }
+        this.node.emit('OnBlocksDestroy', this);
     }
 }
