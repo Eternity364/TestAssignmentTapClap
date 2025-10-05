@@ -15,10 +15,14 @@ export default class BlockMovementController extends cc.Component {
 
     @property(BlockFactory)
     private blockFactory: BlockFactory = null;
+    
+    @property
+    private fallSpeed: number = 500;
+
+    @property
+    private spawnHeightOffset: number = 300;
 
     private fallingBlocks: { block: Block, col: number }[] = [];
-    private spawnHeightOffset: number = 500;
-    private fallSpeed: number = 250;
 
     onLoad() {
         if (this.grid) {
@@ -66,7 +70,6 @@ export default class BlockMovementController extends cc.Component {
         for (let col = 0; col < width; col++) {
             const missingBlocks = height - blocksPerColumn[col] - this.fallingBlocks.filter(fb => fb.col === col).length;
             
-            cc.log("Spawned = " + this.fallingBlocks.length);
             for (let i = 0; i < missingBlocks; i++) {
                 const targetRow = i; // top cells first
                 const block = this.blockFactory.createRandom(this.grid.getParent());
@@ -79,6 +82,7 @@ export default class BlockMovementController extends cc.Component {
                 counter++;
             }
         }
+        cc.log("Spawned = " + counter);
     }
 
     private moveExistingBlocksDown(width: number, height: number): number[] {
@@ -99,6 +103,7 @@ export default class BlockMovementController extends cc.Component {
                 if (targetRow === row) {
                     nextFreeRow[col]--;
                     minTargetRow[col] = Math.min(minTargetRow[col], targetRow);
+                    if (row == 0) minTargetRow[col] = Number.POSITIVE_INFINITY;
                     continue;
                 }
 
@@ -108,11 +113,12 @@ export default class BlockMovementController extends cc.Component {
                 nextFreeRow[col]--;
             }
 
-            if (!hasBlocks) {
-                minTargetRow[col] = height - 1;
-            } else {
+            if (minTargetRow[col] != Number.POSITIVE_INFINITY) {
                 minTargetRow[col] = Math.max(minTargetRow[col] - 1, 0);
             }
+
+            if (!hasBlocks)
+                minTargetRow[col] = height - 1;
         }
 
         return minTargetRow;
@@ -138,9 +144,11 @@ export default class BlockMovementController extends cc.Component {
             const flyingBlocks = blocksPerColumn[col];
             flyingBlocks.sort((a, b) => a.block.node.position.y - b.block.node.position.y);
 
-            for (let row = firstEmptyRow[col]; row >= 0; row--) {
-                this.animateBlockToCell(blocksPerColumn[col][counter].block, row, col);
-                counter++;
+            if (firstEmptyRow[col] != Number.POSITIVE_INFINITY) {
+                for (let row = firstEmptyRow[col]; row >= 0; row--) {
+                    this.animateBlockToCell(flyingBlocks[counter].block, row, col);
+                    counter++;
+                }
             }
             cc.log("Counter = " + counter);
         }
