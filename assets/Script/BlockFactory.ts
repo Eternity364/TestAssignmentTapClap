@@ -1,14 +1,6 @@
 const { ccclass, property } = cc._decorator;
-import Block, { BlockType } from './Block';
-
-@ccclass
-export class BlockSpritePair {
-    @property({ type: cc.Enum(BlockType) })
-    public blockType: BlockType = BlockType.Empty;
-
-    @property(cc.SpriteFrame)
-    public sprite: cc.SpriteFrame = null;
-}
+import Block from './Block';
+import BlockSpritePair from './BlockSpritePair';
 
 @ccclass
 export default class BlockFactory extends cc.Component {
@@ -16,8 +8,8 @@ export default class BlockFactory extends cc.Component {
     @property(cc.Prefab)
     public blockPrefab: cc.Prefab = null;
 
-    @property({ type: [BlockSpritePair] })
-    public blockPairs: BlockSpritePair[] = [];
+    @property([BlockSpritePair])
+    public blockPairs = [];
 
     public createRandom(parentNode: cc.Node): Block {
         if (!this.blockPrefab) {
