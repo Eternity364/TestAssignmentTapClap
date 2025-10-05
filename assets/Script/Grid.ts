@@ -1,4 +1,6 @@
 const { ccclass, property } = cc._decorator;
+import BlockFactory from './BlockFactory';
+import Block from './Block';
 
 @ccclass
 export default class Grid extends cc.Component {
@@ -19,24 +21,19 @@ export default class Grid extends cc.Component {
     backgroundNode: cc.Node = null;
 
     @property
-    bgPadding: number = 0; // optional padding (in pixels) added around the grid background
+    bgPadding: number = 0;
 
-    @property(cc.Prefab)
-    block: cc.Prefab = null;
+    @property(BlockFactory)
+    blockFactory: BlockFactory = null;
 
     private cellPositions: cc.Vec3[] = [];
-    private blockNodes: cc.Node[] = [];
+    private blockNodes: Block[] = [];
 
     start() {
         this.createGrid();
     }
 
     private createGrid() {
-        if (!this.parentNode1 || !this.block) {
-            console.warn("Parent node or cell prefab not assigned!");
-            return;
-        }
-
         this.cellPositions = [];
         this.blockNodes = [];
 
@@ -51,11 +48,10 @@ export default class Grid extends cc.Component {
 
                 this.cellPositions.push(position);
 
-                const cell = cc.instantiate(this.block);
-                cell.setParent(this.parentNode1);
-                cell.position = position;
+                const block = this.blockFactory.createRandom(this.parentNode1);
+                block.node.position = position;
 
-                this.blockNodes.push(cell);
+                this.blockNodes.push(block);
             }
         }
 
