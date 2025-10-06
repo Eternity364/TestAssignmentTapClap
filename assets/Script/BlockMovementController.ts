@@ -40,7 +40,7 @@ export default class BlockMovementController extends cc.Component {
         const height = this.grid.getGridParameters().y;
         
         this.spawnNewBlocks(width, height);
-        //this.moveExistingBlocksDown(width, height);
+        this.moveExistingBlocksDown(width, height);
         this.adjustFallingBlocks(width, height);
     }
 
@@ -84,7 +84,7 @@ export default class BlockMovementController extends cc.Component {
 
     private moveExistingBlocksDown(width: number, height: number): number[] {
         const nextFreeRow: number[] = Array(width).fill(height - 1);
-        const minTargetRow: number[] = Array(width).fill(Number.POSITIVE_INFINITY);
+        const mostBottomTargetRow: number[] = Array(width).fill(Number.POSITIVE_INFINITY);
 
         for (let col = 0; col < width; col++) {
             let hasBlocks = false;
@@ -92,33 +92,28 @@ export default class BlockMovementController extends cc.Component {
             for (let row = height - 1; row >= 0; row--) {
                 const cell = this.grid.getCellAt(row, col);
                 const block = cell.getBlock();
-                if (!block) continue;
+                if (!block) {
+                    if (mostBottomTargetRow[col] == Number.POSITIVE_INFINITY) 
+                        mostBottomTargetRow[col] = row;
+                    continue;
+                }
 
                 hasBlocks = true;
                 const targetRow = nextFreeRow[col];
 
                 if (targetRow === row) {
                     nextFreeRow[col]--;
-                    minTargetRow[col] = Math.min(minTargetRow[col], targetRow);
-                    if (row == 0) minTargetRow[col] = Number.POSITIVE_INFINITY;
                     continue;
                 }
 
                 cell.setBlock(null);
-                this.animateBlockToCell(block, targetRow, col);
-                minTargetRow[col] = Math.min(minTargetRow[col], targetRow);
+                //this.animateBlockToCell(block, targetRow, col);
+                this.fallingBlocks.push({ block, col });
                 nextFreeRow[col]--;
             }
-
-            if (minTargetRow[col] != Number.POSITIVE_INFINITY) {
-                minTargetRow[col] = Math.max(minTargetRow[col] - 1, 0);
-            }
-
-            if (!hasBlocks)
-                minTargetRow[col] = height - 1;
         }
 
-        return minTargetRow;
+        return mostBottomTargetRow;
     }
 
     private adjustFallingBlocks(width: number, height: number): void {
@@ -134,15 +129,15 @@ export default class BlockMovementController extends cc.Component {
         
         this.fallingBlocks = [];
 
-        const firstEmptyRow = this.moveExistingBlocksDown(width, height);
+        const mostBottomTargetRow = this.moveExistingBlocksDown(width, height);
 
         for (let col = 0; col < width; col++) {
             let counter = 0;
             const flyingBlocks = blocksPerColumn[col];
             flyingBlocks.sort((a, b) => a.block.node.position.y - b.block.node.position.y);
 
-            if (firstEmptyRow[col] != Number.POSITIVE_INFINITY) {
-                for (let row = firstEmptyRow[col]; row >= 0; row--) {
+            if (mostBottomTargetRow[col] != Number.POSITIVE_INFINITY) {
+                for (let row = mostBottomTargetRow[col]; row >= 0; row--) {
                     this.animateBlockToCell(flyingBlocks[counter].block, row, col);
                     counter++;
                 }
