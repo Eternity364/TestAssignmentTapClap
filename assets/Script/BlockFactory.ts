@@ -16,11 +16,8 @@ export default class BlockFactory extends cc.Component {
     @property([BlockPrefabPair])
     private boosters = [];
 
-    @property
-    private regularBlockTypesCount: number = 4;
-
     public createRandom(parentNode: cc.Node): Block {
-        const index = Math.floor(Math.random() * this.regularBlockTypesCount);
+        const index = Math.floor(Math.random() * this.getRegularBlockTypesCount());
         return this.createBlockOfType(index, parentNode);
     }
 
@@ -40,7 +37,11 @@ export default class BlockFactory extends cc.Component {
     }
 
     public isRegular(type: BlockType): boolean {
-        return type < this.regularBlockTypesCount;
+        return this.getBoosterOfType(type) == null;
+    }
+
+    private getRegularBlockTypesCount(): number {
+        return this.blockPairs.length - this.boosters.length;
     }
 
     private getBoosterOfType(type: BlockType): cc.Prefab | null {

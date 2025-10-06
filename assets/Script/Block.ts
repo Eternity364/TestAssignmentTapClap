@@ -10,6 +10,7 @@ export enum BlockType {
     Yellow,
     RocketsHorizontal,
     RocketsVertical,
+    Bomb,
     Empty
 }
 

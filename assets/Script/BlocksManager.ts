@@ -3,7 +3,6 @@ import Grid from './Grid';
 import Cell from './Cell';
 import Block, { BlockType } from './Block';
 import BlockFactory from './BlockFactory';
-import Booster from './Booster';
 import BoosterBlock from './BoosterBlock';
 
 @ccclass
@@ -64,6 +63,8 @@ export default class BlockManager extends cc.Component {
     }
 
     private getBoosterType(numberOfElements: number) : BlockType {
+        if (numberOfElements >= 6)
+            return BlockType.Bomb;
         if (numberOfElements >= 5)
             return BlockType.RocketsVertical;
         else if(numberOfElements >= 4)
