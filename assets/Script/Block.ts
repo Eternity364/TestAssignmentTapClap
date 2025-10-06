@@ -4,16 +4,20 @@ import ObjectPool from "./ObjectPool";
 const { ccclass, property } = cc._decorator;
 
 export enum BlockType {
-    Empty,
     Green,
     Purple,
     Red,
-    Yellow
+    Yellow,
+    RocketsHorizontal,
+    RocketsVertical,
+    Empty
 }
 
 @ccclass
 export default class Block extends cc.Component {
-    @property
+    @property({
+        type: cc.Enum(BlockType)
+    })
     public blockType: BlockType = BlockType.Empty;
 
     @property(cc.Sprite)
@@ -69,14 +73,11 @@ export default class Block extends cc.Component {
 
         cc.Tween.stopAllByTarget(node);
 
-        // Start fading right away while also scaling up
         cc.tween(node)
-            // Grow + begin fading
             .parallel(
                 cc.tween().to(0.12, { scale: 1.15 }, { easing: "sineOut" }),
-                cc.tween().to(0.12, { opacity: 255 }, { easing: "sineOut" }) // start fading right away
+                cc.tween().to(0.12, { opacity: 255 }, { easing: "sineOut" })
             )
-            // Shrink + continue fading out completely
             .parallel(
                 cc.tween().to(0.25, { scale: 0.0 }, { easing: "backIn" }),
                 cc.tween().to(0.4, { opacity: 0 }, { easing: "sineIn" })

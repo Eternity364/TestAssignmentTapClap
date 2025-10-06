@@ -1,7 +1,6 @@
 const { ccclass, property } = cc._decorator;
 import Grid from "./Grid";
 import Block from "./Block";
-import Cell from "./Cell";
 import BlockFactory from "./BlockFactory";
 import BlockManager from "./BlocksManager";
 
@@ -42,6 +41,17 @@ export default class BlockMovementController extends cc.Component {
         this.spawnNewBlocks(width, height);
         this.moveExistingBlocksDown(width, height);
         this.adjustFallingBlocks(width, height);
+    }
+
+    public removeFallingBlock(block: Block) {
+        this.fallingBlocks = this.fallingBlocks.filter(fb => fb.block !== block);
+        block.activeTween.stop();
+    }
+
+    public getFallingBlocksInColumn(col: number): Block[] {
+        return this.fallingBlocks
+            .filter(fb => fb.col === col)
+            .map(fb => fb.block);
     }
 
     private getNumberOfBlocksInGridPerColumn(): number[] {

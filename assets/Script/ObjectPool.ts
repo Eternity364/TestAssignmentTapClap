@@ -26,7 +26,6 @@ export default class ObjectPool extends cc.Component {
             this.pools[key] = [];
         }
 
-        // Try to find an inactive one
         for (let i = 0; i < this.pools[key].length; i++) {
             const node = this.pools[key][i];
             if (!node.activeInHierarchy) {
@@ -35,7 +34,6 @@ export default class ObjectPool extends cc.Component {
             }
         }
 
-        // None found → instantiate new one
         const newNode = cc.instantiate(prefab);
         newNode.name = prefab.data.name;
         this.pools[key].push(newNode);
@@ -43,9 +41,6 @@ export default class ObjectPool extends cc.Component {
         return newNode;
     }
 
-    /**
-     * Return an object back to the pool (disables and re-parents it).
-     */
     public returnObject(node: cc.Node): void {
         node.parent = this.node;
         node.active = false;

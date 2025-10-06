@@ -29,24 +29,34 @@ export default class Grid extends cc.Component {
     private cells: Cell[][] = [];
     private cellPositions: cc.Vec3[][] = [];
     private cellCoords: Map<Cell, cc.Vec2> = new Map();
-    // private movingBlock: Block = null;
-    // private lastCellRow: number = 0;
-    // private lastCellCol: number = 0;
-    // private moveDir: cc.Vec3 = cc.v3(0, 0, 0);
 
     start() {
         this.createGrid();
+    }
 
-        // this.movingBlock = this.cells[0][0].getBlock(); 
-        // this.lastCellRow = 0;
-        // this.lastCellCol = 0;
+    public setBlockInCell(cell: Cell, block: Block, setPosition: boolean) {
+        cell.setBlock(block);
+        let cellCoord = this.getCellCoords(cell);
+        let position = this.getCellPosition(cellCoord.y, cellCoord.x);
+        block.node.position = setPosition ? position : block.node.position;
+    }
 
-        // cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
-        // cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+    public getCellSize() : number {
+        return this.cellSize;
     }
 
     public getGridParameters() : cc.Vec2 {
         return new cc.Vec2(this.width, this.height);
+    }
+
+    public getCellsInRow(row: number): Cell[] {
+        if (row < 0 || row >= this.height) return [];
+        return this.cells[row];
+    }
+
+    public getCellsInColumn(col: number): Cell[] {
+        if (col < 0 || col >= this.width) return [];
+        return this.cells.map(row => row[col]).filter(cell => cell);
     }
 
     public getCellAtPosition(pos: cc.Vec3): Cell | null {
@@ -60,7 +70,6 @@ export default class Grid extends cc.Component {
             return null;
         }
         
-        cc.log(`Block moved to cell (${row}, ${col})`);
         return this.cells[row][col];
     }
 
@@ -188,32 +197,4 @@ export default class Grid extends cc.Component {
 
         this.node.emit('OnGridCreate', this);
     }
-
-    // private onKeyDown(event: cc.Event.EventKeyboard) {
-    //     switch (event.keyCode) {
-    //         case cc.macro.KEY.up: this.moveDir.y = 1; break;
-    //         case cc.macro.KEY.down: this.moveDir.y = -1; break;
-    //         case cc.macro.KEY.left: this.moveDir.x = -1; break;
-    //         case cc.macro.KEY.right: this.moveDir.x = 1; break;
-    //     }
-    // }
-
-    // private onKeyUp(event: cc.Event.EventKeyboard) {
-    //     switch (event.keyCode) {
-    //         case cc.macro.KEY.up:
-    //         case cc.macro.KEY.down: this.moveDir.y = 0; break;
-    //         case cc.macro.KEY.left:
-    //         case cc.macro.KEY.right: this.moveDir.x = 0; break;
-    //     }
-    // }
-
-
-    // update(dt: number) {
-    //     if (!this.movingBlock) return;
-
-    //     const speed = 200; // units per second
-    //     const deltaMove = this.moveDir.mul(speed * dt);
-    //     this.movingBlock.node.position = this.movingBlock.node.position.add(deltaMove);
-    //     this.getCellAtPosition(this.movingBlock.node.position);
-    // }
 }
