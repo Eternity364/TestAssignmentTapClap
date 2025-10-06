@@ -1,15 +1,13 @@
-import Block from "./Block";
+import BoosterBlock from "./BoosterBlock";
 import Cell from "./Cell";
 import Grid from "./Grid";
 
-const { ccclass } = cc._decorator;
+export type DestroyBlockInCell = (cell: Cell) => void;
+export type VoidCallback = () => void;
 
-type DestroyBlockInCell = (cell: Cell) => void;
-type VoidCallback = () => void;
-
-@ccclass
-export default abstract class Booster extends Block {
-    public abstract Execute(
+export default interface Booster {
+    Execute(
+        block: BoosterBlock,
         startCell: Cell,
         grid: Grid,
         TryToDestroyBlockInCell: DestroyBlockInCell,

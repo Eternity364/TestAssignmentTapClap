@@ -489,7 +489,6 @@
     "blockFactory": {
       "__id__": 17
     },
-    "blockMovementController": null,
     "minCellCountToDestroy": 3,
     "minCellCountToSpawnBooster": 4,
     "_id": "d8fDwBTVFN7JqzZj5N5h4g"
@@ -894,7 +893,9 @@
   {
     "__type__": "BlockPrefabPair",
     "blockType": 5,
-    "prefab": null
+    "prefab": {
+      "__uuid__": "dad9cd2b-b462-4246-9fe9-fe0bfce75c16"
+    }
   },
   {
     "__type__": "cc.Node",

@@ -4,6 +4,7 @@ import Cell from './Cell';
 import Block, { BlockType } from './Block';
 import BlockFactory from './BlockFactory';
 import Booster from './Booster';
+import BoosterBlock from './BoosterBlock';
 
 @ccclass
 export default class BlockManager extends cc.Component {
@@ -71,9 +72,9 @@ export default class BlockManager extends cc.Component {
             return BlockType.Empty;
     }
 
-    private executeBooster(booster: Booster, cell: Cell) {
+    private executeBooster(boosterBlock: BoosterBlock, cell: Cell) {
         this.lockGrid(1);
-        booster.Execute(
+        boosterBlock.executeBooster(
             cell,
             this.grid,
             (cell) => this.tryToDestroyBlockInCell(cell),
@@ -92,7 +93,7 @@ export default class BlockManager extends cc.Component {
         cell.setBlock(null);
         const isBooster = !this.blockFactory.isRegular(block.blockType);
         if (isBooster) {
-            this.executeBooster(block as Booster, cell);
+            this.executeBooster(block as BoosterBlock, cell);
         }
     }
 

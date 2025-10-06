@@ -109,17 +109,15 @@
     "_id": ""
   },
   {
-    "__type__": "9a4990x2yVDx5pGimeHQo4D",
+    "__type__": "9ce8bXilEJKu5+FL7IKTE+D",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 1
     },
     "_enabled": true,
-    "blockType": 5,
-    "visualNode": {
-      "__id__": 2
-    },
+    "blockType": 6,
+    "visualNode": null,
     "_id": ""
   },
   {
