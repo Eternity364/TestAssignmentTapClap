@@ -1,6 +1,7 @@
 const { ccclass, property } = cc._decorator;
 import Block from './Block';
 import BlockSpritePair from './BlockSpritePair';
+import ObjectPool from './ObjectPool';
 
 @ccclass
 export default class BlockFactory extends cc.Component {
@@ -15,7 +16,7 @@ export default class BlockFactory extends cc.Component {
         const index = Math.floor(Math.random() * this.blockPairs.length);
         const pair = this.blockPairs[index];
 
-        const blockNode = cc.instantiate(this.blockPrefab);
+        const blockNode = ObjectPool.Instance.getObject(this.blockPrefab, true);
         blockNode.setParent(parentNode);
 
         const blockComp = blockNode.getComponent(Block) || blockNode.addComponent(Block);

@@ -1,4 +1,5 @@
 import Cell from "./Cell";
+import ObjectPool from "./ObjectPool";
 
 const { ccclass, property } = cc._decorator;
 
@@ -20,6 +21,11 @@ export default class Block extends cc.Component {
     
     public activeTween: cc.Tween<cc.Node> | null = null;
     public targetCell: Cell | null = null;
+    public originalZIndex: number = 0;
+
+    protected start(): void {
+        this.originalZIndex = this.node.zIndex;
+    }
 
     public init(type: BlockType, sprite: cc.SpriteFrame) {
         this.blockType = type;
@@ -30,6 +36,11 @@ export default class Block extends cc.Component {
                 this.visualNode = this.addComponent(cc.Sprite);
             }
         }
+        
+        this.node.scale = 1;
+        this.node.opacity = 255;
+        this.visualNode.node.y = 0;
+        this.node.zIndex = this.originalZIndex;
 
         this.visualNode.spriteFrame = sprite;
     }
@@ -54,15 +65,7 @@ export default class Block extends cc.Component {
         const node = this.visualNode.node;
         node.scale = 1;
         node.opacity = 255;
-
-        // Ensure block renders above others
-        if (this.node.parent) {
-            if (typeof (this.node as any).setLocalZOrder === "function") {
-                (this.node as any).setLocalZOrder(9999);
-            } else {
-                this.node.zIndex = 9999;
-            }
-        }
+        this.node.zIndex = 9999;
 
         cc.Tween.stopAllByTarget(node);
 
@@ -79,7 +82,7 @@ export default class Block extends cc.Component {
                 cc.tween().to(0.4, { opacity: 0 }, { easing: "sineIn" })
             )
             .call(() => {
-                this.node.destroy();
+                ObjectPool.Instance.returnObject(this.node);
                 if (onComplete) onComplete();
             })
             .start();
