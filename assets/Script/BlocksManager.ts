@@ -44,6 +44,8 @@ export default class BlockManager extends cc.Component {
         const cells: Cell[] = this.grid.getConnectedCellsOfSameType(event);
         const cellUnderMouse: Cell = this.grid.getCellAtMousePosition(event);
 
+        cc.log("mouse = " + this.grid.getCellCoords(cellUnderMouse));
+
         if (cells.length >= this.minCellCountToDestroy) {
             for (let index = 0; index < cells.length; index++) {
                 const cell = cells[index];
@@ -63,9 +65,11 @@ export default class BlockManager extends cc.Component {
     }
 
     private getBoosterType(numberOfElements: number) : BlockType {
-        if (numberOfElements >= 6)
+        if (numberOfElements >= 8)
+            return BlockType.MegaBomb;
+        else if (numberOfElements >= 6)
             return BlockType.Bomb;
-        if (numberOfElements >= 5)
+        else if (numberOfElements >= 5)
             return BlockType.RocketsVertical;
         else if(numberOfElements >= 4)
             return BlockType.RocketsHorizontal;

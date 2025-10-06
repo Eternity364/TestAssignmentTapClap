@@ -11,6 +11,7 @@ export enum BlockType {
     RocketsHorizontal,
     RocketsVertical,
     Bomb,
+    MegaBomb,
     Empty
 }
 
