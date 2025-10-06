@@ -157,13 +157,14 @@ export default class BlockMovementController extends cc.Component {
 
         if (block.activeTween) block.activeTween.stop();
         block.activeTween = cc.tween(block.node)
-            .to(duration, { position: targetPos }, { easing: 'sineOut' })
+            .to(duration, { position: targetPos }, { easing: 'linear' })
             .call(() => {
                 const targetCell = this.grid.getCellAt(targetRow, targetCol);
                 targetCell.setBlock(block);
 
                 const index = this.fallingBlocks.findIndex(fb => fb.block === block && fb.col === targetCol);
                 if (index >= 0) this.fallingBlocks.splice(index, 1);
+                block.playLandingAnimation();
             })
             .start();
 

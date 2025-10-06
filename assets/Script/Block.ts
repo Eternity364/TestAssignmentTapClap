@@ -33,4 +33,55 @@ export default class Block extends cc.Component {
 
         this.visualNode.spriteFrame = sprite;
     }
+
+    public playLandingAnimation() {
+        if (!this.visualNode) return;
+
+        const node = this.visualNode.node;
+        const originalY = node.y;
+
+        cc.Tween.stopAllByTarget(node);
+
+        cc.tween(node)
+            .to(0.08, { y: originalY + 15 }, { easing: "linear" })
+            .to(0.12, { y: originalY }, { easing: "easeOutElastic" })
+            .start();
+    }
+
+   public playDestroyAnimation(onComplete?: () => void) {
+        if (!this.visualNode) return;
+
+        const node = this.visualNode.node;
+        node.scale = 1;
+        node.opacity = 255;
+
+        // Ensure block renders above others
+        if (this.node.parent) {
+            if (typeof (this.node as any).setLocalZOrder === "function") {
+                (this.node as any).setLocalZOrder(9999);
+            } else {
+                this.node.zIndex = 9999;
+            }
+        }
+
+        cc.Tween.stopAllByTarget(node);
+
+        // Start fading right away while also scaling up
+        cc.tween(node)
+            // Grow + begin fading
+            .parallel(
+                cc.tween().to(0.12, { scale: 1.3 }, { easing: "sineOut" }),
+                cc.tween().to(0.12, { opacity: 255 }, { easing: "sineOut" }) // start fading right away
+            )
+            // Shrink + continue fading out completely
+            .parallel(
+                cc.tween().to(0.25, { scale: 0.0 }, { easing: "backIn" }),
+                cc.tween().to(0.4, { opacity: 0 }, { easing: "sineIn" })
+            )
+            .call(() => {
+                this.node.destroy();
+                if (onComplete) onComplete();
+            })
+            .start();
+    }
 }

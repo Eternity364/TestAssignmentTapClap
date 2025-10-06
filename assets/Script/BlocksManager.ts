@@ -21,7 +21,7 @@ export default class BlockManager extends cc.Component {
         for (let index = 0; index < cells.length; index++) {
                 const cell = cells[index];
                 const block: Block = cell.getBlock();
-                block.node.destroy();
+                block.playDestroyAnimation();
                 cell.setBlock(null);
         }
         this.node.emit('OnBlocksDestroy', this);
