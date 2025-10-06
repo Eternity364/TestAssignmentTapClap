@@ -925,8 +925,8 @@
     "blockFactory": {
       "__id__": 17
     },
-    "fallSpeed": 600,
-    "spawnHeightOffset": 300,
+    "fallSpeed": 8,
+    "spawnHeightOffset": 800,
     "_id": "7caqeCbjBAhJvQTrSMhXgg"
   }
 ]

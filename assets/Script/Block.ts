@@ -70,7 +70,7 @@ export default class Block extends cc.Component {
         cc.tween(node)
             // Grow + begin fading
             .parallel(
-                cc.tween().to(0.12, { scale: 1.3 }, { easing: "sineOut" }),
+                cc.tween().to(0.12, { scale: 1.15 }, { easing: "sineOut" }),
                 cc.tween().to(0.12, { opacity: 255 }, { easing: "sineOut" }) // start fading right away
             )
             // Shrink + continue fading out completely

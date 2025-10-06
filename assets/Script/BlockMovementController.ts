@@ -70,7 +70,7 @@ export default class BlockMovementController extends cc.Component {
             const missingBlocks = height - blocksPerColumn[col] - this.fallingBlocks.filter(fb => fb.col === col).length;
             
             for (let i = 0; i < missingBlocks; i++) {
-                const targetRow = i; // top cells first
+                const targetRow = i;
                 const block = this.blockFactory.createRandom(this.grid.getParent());
 
                 const targetPos = this.grid.getCellPosition(targetRow, col);
@@ -107,7 +107,6 @@ export default class BlockMovementController extends cc.Component {
                 }
 
                 cell.setBlock(null);
-                //this.animateBlockToCell(block, targetRow, col);
                 this.fallingBlocks.push({ block, col });
                 nextFreeRow[col]--;
             }
