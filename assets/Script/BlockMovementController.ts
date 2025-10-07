@@ -152,6 +152,9 @@ export default class BlockMovementController extends cc.Component {
                 }
             }
         }
+
+        if (this.fallingBlocks.length > 0)
+            this.node.emit('OnGridStabilityChange', false);
     }
 
     private animateBlockToCell(block: Block, targetRow: number, targetCol: number) {
@@ -169,6 +172,8 @@ export default class BlockMovementController extends cc.Component {
                 const index = this.fallingBlocks.findIndex(fb => fb.block === block && fb.col === targetCol);
                 if (index >= 0) this.fallingBlocks.splice(index, 1);
                 block.playLandingAnimation();
+                if (this.fallingBlocks.length == 0)
+                    this.node.emit('OnGridStabilityChange', true);
             })
             .start();
 

@@ -29,6 +29,8 @@ export default class Block extends cc.Component {
     public targetCell: Cell | null = null;
     public originalZIndex: number = 0;
 
+    public picked: boolean = false;
+
     protected start(): void {
         this.originalZIndex = this.node.zIndex;
     }
@@ -65,7 +67,11 @@ export default class Block extends cc.Component {
             .start();
     }
 
-   public playDestroyAnimation(onComplete?: () => void) {
+    public setZIndexToMaximum(max: boolean) {
+        this.node.zIndex = max ? 9999 : this.originalZIndex;
+    }
+
+    public playDestroyAnimation(onComplete?: () => void) {
         if (!this.visualNode) return;
 
         const node = this.visualNode.node;
@@ -117,4 +123,14 @@ export default class Block extends cc.Component {
             .start();
     }
 
+    public setPickedStatus(value: boolean): void {
+        this.picked = value;
+        cc.Tween.stopAllByTarget(this.node);
+        this.setZIndexToMaximum(value);
+
+        let scaleValue: number = value ? 1.2 : 1;
+        cc.tween(this.node)
+            .to(0.15, { scale: scaleValue }, { easing: "sineOut" })
+            .start();
+    }
 }

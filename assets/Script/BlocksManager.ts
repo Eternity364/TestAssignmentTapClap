@@ -26,6 +26,17 @@ export default class BlockManager extends cc.Component {
         const canvas = cc.find('Canvas');
         canvas.on(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this);
     }
+    
+    public getGridLock() : number {
+        return this.inputLock;
+    }
+
+    public lockGrid(lockValue: number) {
+        this.inputLock += lockValue;
+        cc.log("Grid lock changed to " + this.inputLock);
+        if (this.inputLock == 0) 
+            this.node.emit('OnBlocksDestroy', this);
+    }
 
     private onMouseDown(event: cc.Event.EventMouse) {
         if (!this.grid) return;
@@ -133,12 +144,6 @@ export default class BlockManager extends cc.Component {
         if (isBooster) {
             this.executeBooster(block as BoosterBlock, cell);
         }
-    }
-
-    private lockGrid(lockValue: number) {
-        this.inputLock += lockValue;
-        if (this.inputLock == 0) 
-            this.node.emit('OnBlocksDestroy', this);
     }
 
     private checkIfCellHasBooster(cell: Cell) : boolean {
