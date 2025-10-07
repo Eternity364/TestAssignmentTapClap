@@ -44,25 +44,58 @@ export default class BlockManager extends cc.Component {
         const cells: Cell[] = this.grid.getConnectedCellsOfSameType(event);
         const cellUnderMouse: Cell = this.grid.getCellAtMousePosition(event);
 
-        cc.log("mouse = " + this.grid.getCellCoords(cellUnderMouse));
-
         if (cells.length >= this.minCellCountToDestroy) {
-            for (let index = 0; index < cells.length; index++) {
-                const cell = cells[index];
-                this.tryToDestroyBlockInCell(cell);
+            if (cells.length < this.minCellCountToSpawnBooster) {
+                for (let i = 0; i < cells.length; i++) {
+                    const cell = cells[i];
+                    this.tryToDestroyBlockInCell(cell);
+                }
+                this.lockGrid(0);
             }
-            if (cells.length >= this.minCellCountToSpawnBooster) {
-                const block: Block = this.blockFactory.createBlockOfType(this.getBoosterType(cells.length), this.grid.getParent());
-                cellUnderMouse.setBlock(block);
-                this.grid.setBlockInCell(cellUnderMouse, block, true);
+            else {
+                this.lockGrid(1);
+                const boosterBlock: Block = this.blockFactory.createBlockOfType(
+                    this.getBoosterType(cells.length),
+                    this.grid.getParent()
+                );
+                
+                const cellCoord = this.grid.getCellCoords(cellUnderMouse);
+                const boosterTarget = this.grid.getCellPosition(cellCoord.y, cellCoord.x);
+                const baseDuration = 0.45;
+                let longestDelay = 0;
+                let durationArray: number[] = [];
+                const longestOnComplete = () => {
+                    this.lockGrid(-1);
+                };
+
+                for (let i = 0; i < cells.length; i++) {
+                    durationArray[i] = baseDuration + (Math.random() - 0.5) * 0.1;
+                    longestDelay = Math.max(longestDelay, durationArray[i]);
+                }
+
+                for (let i = 0; i < cells.length; i++) {
+                    const cell = cells[i];
+                    const block = cell.getBlock();
+                    if (!block) continue;
+                    cell.setBlock(null);
+                    
+                    let onCompleteForCell: () => void = () => {};
+                    const duration = durationArray[i];
+                    if (duration == longestDelay) {
+                        onCompleteForCell = longestOnComplete;
+                    }
+                    block.panToAndDestroyAnimation(boosterTarget, durationArray[i], onCompleteForCell);
+                }
+                
+                this.grid.setBlockInCell(cellUnderMouse, boosterBlock, true);
             }
-            this.node.emit('OnBlocksDestroy', this);
-        }
+        } 
         else if (cellUnderMouse && cellUnderMouse.getBlock()) {
             const block: Block = cellUnderMouse.getBlock();
             block.playLandingAnimation();
         }
     }
+
 
     private getBoosterType(numberOfElements: number) : BlockType {
         if (numberOfElements >= 8)

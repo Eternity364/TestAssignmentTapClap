@@ -90,4 +90,31 @@ export default class Block extends cc.Component {
             })
             .start();
     }
+
+    public panToAndDestroyAnimation(target: cc.Vec3, duration: number, onComplete?: () => void) {
+        if (!this.visualNode) return;
+
+        const node = this.visualNode.node;
+        node.scale = 1;
+        node.opacity = 255;
+        this.node.zIndex = 9999;
+
+        cc.Tween.stopAllByTarget(node);
+
+        cc.tween(node)
+            .to(
+                duration,
+                {
+                    position: target,
+                    opacity: 0
+                },
+                { easing: "sineInOut" }
+            )
+            .call(() => {
+                ObjectPool.Instance.returnObject(this.node);
+                if (onComplete) onComplete();
+            })
+            .start();
+    }
+
 }
