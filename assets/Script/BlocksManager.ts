@@ -5,6 +5,8 @@ import Block, { BlockType } from './Block';
 import BlockFactory from './BlockFactory';
 import BoosterBlock from './BoosterBlock';
 import { BlockNumberPair } from './PairStructs';
+import TurnsController from './TurnsController';
+import PointsController from './PointsController';
 
 @ccclass
 export default class BlockManager extends cc.Component {
@@ -14,6 +16,12 @@ export default class BlockManager extends cc.Component {
     
     @property(BlockFactory)
     private blockFactory: BlockFactory = null;
+    
+    @property(TurnsController)
+    protected turnsController: TurnsController = null;
+
+    @property(PointsController)
+    protected pointsController: PointsController = null;
 
     @property
     private minCellCountToDestroy: number = 3;  
@@ -74,6 +82,7 @@ export default class BlockManager extends cc.Component {
         const cells: Cell[] = this.grid.getConnectedCellsOfSameType(cellUnderMouse);
 
         if (cells.length >= this.minCellCountToDestroy) {
+            this.turnsController.Increment();
             if (cells.length < this.minCellCountToSpawnBooster) {
                 for (let i = 0; i < cells.length; i++) {
                     const cell = cells[i];
@@ -106,7 +115,7 @@ export default class BlockManager extends cc.Component {
                     const cell = cells[i];
                     const block = cell.getBlock();
                     if (!block) continue;
-                    cell.setBlock(null);
+                    this.destroyBlockInCell(cell);
                     
                     let onCompleteForCell: () => void = () => {};
                     const duration = durationArray[i];
@@ -157,18 +166,25 @@ export default class BlockManager extends cc.Component {
         if (!block) return;
         
         block.playDestroyAnimation();
-        cell.setBlock(null);
+        this.destroyBlockInCell(cell);
         const isBooster = !this.blockFactory.isRegular(block.blockType);
         if (isBooster) {
             this.executeBooster(block as BoosterBlock, cell);
         }
     }
 
+    private destroyBlockInCell(cell: Cell) {
+        this.pointsController.Increase(cell.getBlock().blockType);
+        cell.setBlock(null);
+    }
+
     private checkIfCellHasBooster(cell: Cell) : boolean {
         const block: Block = cell.getBlock();
         const isBooster = block && !this.blockFactory.isRegular(block.blockType);
-        if (isBooster)
+        if (isBooster) {
             this.tryToDestroyBlockInCell(cell);
+            this.turnsController.Increment();
+        }
         return isBooster;
     }
 }

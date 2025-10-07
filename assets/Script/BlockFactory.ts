@@ -2,7 +2,6 @@ const { ccclass, property } = cc._decorator;
 import Block, { BlockType } from './Block';
 import { BlockSpritePair, BlockPrefabPair } from './PairStructs';
 import ObjectPool from './ObjectPool';
-import Booster from './Booster';
 
 @ccclass
 export default class BlockFactory extends cc.Component {
