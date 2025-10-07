@@ -8223,7 +8223,7 @@ declare namespace cc {
 	
 	The following events are only triggered on the PC platform:
 	
-	  - cc.Node.EventType.MOUSE_DOWN
+	  - cc.Node.EventType.TOUCH_START
 	  - cc.Node.EventType.MOUSE_MOVE
 	  - cc.Node.EventType.MOUSE_ENTER
 	  - cc.Node.EventType.MOUSE_LEAVE
@@ -8252,7 +8252,7 @@ declare namespace cc {
 	
 	以下事件只在 PC 平台上触发：
 	
-	  - cc.Node.EventType.MOUSE_DOWN  // 鼠标按下时事件
+	  - cc.Node.EventType.TOUCH_START  // 鼠标按下时事件
 	  - cc.Node.EventType.MOUSE_MOVE  // 鼠标按住移动后事件
 	  - cc.Node.EventType.MOUSE_ENTER // 鼠标进入目标事件
 	  - cc.Node.EventType.MOUSE_LEAVE // 鼠标离开目标事件

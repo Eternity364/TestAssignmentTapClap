@@ -34,7 +34,7 @@ export default abstract class Ability extends cc.Component {
 
     protected onLoad() {
         if (this.iconNode) {
-            this.iconNode.on(cc.Node.EventType.MOUSE_DOWN, this.onIconClick, this);
+            this.iconNode.on(cc.Node.EventType.TOUCH_START, this.onIconClick, this);
         }
         
         if (this.blockMovementController) {

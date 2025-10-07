@@ -14,7 +14,7 @@ export default class SwitchAbility extends Ability {
         super.onLoad();
         
         const canvas = cc.find("Canvas");
-        canvas.on(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this);
+        canvas.on(cc.Node.EventType.TOUCH_START, this.onMouseDown, this);
     }
 
     protected override onIconClick() {
@@ -61,7 +61,7 @@ export default class SwitchAbility extends Ability {
         }
     }
 
-    private onMouseDown(event: cc.Event.EventMouse) {
+    private onMouseDown(event: cc.Event.EventTouch) {
         if (!this.boosterEnabled || !this.grid) return;
 
         if (this.numberOfUses <= 0) return;

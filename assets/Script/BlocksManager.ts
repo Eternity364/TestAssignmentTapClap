@@ -34,11 +34,15 @@ export default class BlockManager extends cc.Component {
 
     onLoad() {
         const canvas = cc.find('Canvas');
-        canvas.on(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this);
+        canvas.on(cc.Node.EventType.TOUCH_START, this.onMouseDown, this);
 
         this.minCellCountToSpawnBooster = this.minCellCountsToSpawnBooster.length > 0
             ? Math.min(...this.minCellCountsToSpawnBooster.map(pair => pair.number))
             : Number.MAX_SAFE_INTEGER;
+    }
+    
+    public test(event) {
+       this.grid.node.position = this.grid.node.position.add(new cc.Vec3(event.getLocation(), 0, 0));
     }
     
     public getGridLock() : number {
@@ -64,7 +68,7 @@ export default class BlockManager extends cc.Component {
         return Number.MAX_SAFE_INTEGER;
     }
 
-    private onMouseDown(event: cc.Event.EventMouse) {
+    private onMouseDown(event: cc.Event.EventTouch) {
         if (!this.grid) return;
 
         if (this.inputLock > 0) return;
@@ -77,7 +81,7 @@ export default class BlockManager extends cc.Component {
         this.tryDestroyZoneAndSpawnBooster(event);
     }
 
-    private tryDestroyZoneAndSpawnBooster(event: cc.Event.EventMouse) {
+    private tryDestroyZoneAndSpawnBooster(event: cc.Event.EventTouch) {
         const cellUnderMouse: Cell = this.grid.getCellAtMousePosition(event);
         const cells: Cell[] = this.grid.getConnectedCellsOfSameType(cellUnderMouse);
 

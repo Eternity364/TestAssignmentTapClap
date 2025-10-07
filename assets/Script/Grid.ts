@@ -84,7 +84,7 @@ export default class Grid extends cc.Component {
         return this.cells[row][col];
     }
 
-    public getCellAtMousePosition(mouseEvent: cc.Event.EventMouse): Cell | null {
+    public getCellAtMousePosition(mouseEvent: cc.Event.EventTouch): Cell | null {
         if (!this.cells || this.cells.length === 0) return null;
 
         const worldPos = mouseEvent.getLocation();
