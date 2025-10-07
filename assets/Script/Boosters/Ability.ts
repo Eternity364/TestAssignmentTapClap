@@ -6,6 +6,9 @@ import BlockMovementController from "../BlockMovementController";
 
 @ccclass
 export default abstract class Ability extends cc.Component {
+    @property
+    protected numberOfUses: number = 3;
+
     @property(Grid)
     protected grid: Grid = null;
 
@@ -16,10 +19,14 @@ export default abstract class Ability extends cc.Component {
     protected blockMovementController: BlockMovementController = null;
 
     @property(cc.Node)
-    protected iconNode: cc.Node = null;
+    public iconNode: cc.Node = null;
 
     protected boosterEnabled: boolean = false;
     protected gridStable: boolean = false;
+
+    public getNumberOfUses(): number {
+        return this.numberOfUses;
+    }
 
     protected onLoad() {
         if (this.iconNode) {
@@ -31,6 +38,11 @@ export default abstract class Ability extends cc.Component {
         if (this.blockMovementController) {
             this.blockMovementController.node.on("OnGridStabilityChange", this.onGridStabilityChange, this);
         }
+    }
+
+    protected onUsed() {
+        this.numberOfUses--;
+        this.node.emit("OnAbilityUsed", this.numberOfUses);
     }
 
     private onKeyDown(event: cc.Event.EventKeyboard) {

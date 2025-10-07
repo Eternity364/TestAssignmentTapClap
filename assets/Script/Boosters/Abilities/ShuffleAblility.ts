@@ -36,6 +36,10 @@ export default class ShuffleAbility extends Ability {
     }
 
     private shuffleBoard() {
+        if (this.numberOfUses <= 0) return;
+
+        this.onUsed();
+
         if (!this.grid) return;
 
         const allCells = this.grid.getAllCells().filter(c => c.getBlock());

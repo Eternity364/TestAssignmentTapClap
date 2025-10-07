@@ -31,6 +31,7 @@ export default class SwitchAbility extends Ability {
         if (this.boosterEnabled === value) return;
         if (!this.gridStable) return;
         if (this.blockManager.getGridLock() > 1) return;
+        if (value && this.numberOfUses <= 0) return;
 
         this.boosterEnabled = value;
 
@@ -63,6 +64,8 @@ export default class SwitchAbility extends Ability {
     private onMouseDown(event: cc.Event.EventMouse) {
         if (!this.boosterEnabled || !this.grid) return;
 
+        if (this.numberOfUses <= 0) return;
+
         const cell = this.grid.getCellAtMousePosition(event);
         if (!cell) return;
 
@@ -80,6 +83,7 @@ export default class SwitchAbility extends Ability {
         if (!this.secondPickedCell) {
             this.secondPickedCell = cell;
             block.setPickedStatus(true);
+            this.onUsed();
             SwitchBooster.swapPickedBlocks(this.firstPickedCell, this.secondPickedCell, () => {
                 this.animationPlaying = false;
                 this.firstPickedCell = null;

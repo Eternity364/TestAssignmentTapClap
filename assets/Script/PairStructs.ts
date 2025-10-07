@@ -1,4 +1,4 @@
-const { ccclass, property } = cc._decorator;
+const {} = cc._decorator;
 import { BlockType } from './Block';
 
 // Existing pair for block type → sprite
