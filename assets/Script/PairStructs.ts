@@ -1,7 +1,6 @@
 const {} = cc._decorator;
 import { BlockType } from './Block';
 
-// Existing pair for block type → sprite
 const BlockSpritePair = cc.Class({
     name: 'BlockSpritePair',
     properties: {
@@ -30,4 +29,18 @@ const BlockPrefabPair = cc.Class({
     }
 });
 
-export { BlockSpritePair, BlockPrefabPair };
+const BlockNumberPair = cc.Class({
+    name: 'BlockNumberPair',
+    properties: {
+        blockType: {
+            default: BlockType.Empty,
+            type: cc.Enum(BlockType)
+        },
+        number: {
+            default: 0,
+            type: cc.Integer
+        }
+    }
+});
+
+export { BlockSpritePair, BlockPrefabPair, BlockNumberPair };

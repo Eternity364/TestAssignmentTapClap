@@ -4,6 +4,7 @@ import Cell from './Cell';
 import Block, { BlockType } from './Block';
 import BlockFactory from './BlockFactory';
 import BoosterBlock from './BoosterBlock';
+import { BlockNumberPair } from './PairStructs';
 
 @ccclass
 export default class BlockManager extends cc.Component {
@@ -15,16 +16,21 @@ export default class BlockManager extends cc.Component {
     private blockFactory: BlockFactory = null;
 
     @property
-    private minCellCountToDestroy: number = 3;
-    
-    @property
-    private minCellCountToSpawnBooster: number = 4;
+    private minCellCountToDestroy: number = 3;  
+
+    @property([BlockNumberPair])
+    private minCellCountsToSpawnBooster = [];
 
     private inputLock : number = 0;
+    private minCellCountToSpawnBooster: number;
 
     onLoad() {
         const canvas = cc.find('Canvas');
         canvas.on(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this);
+
+        this.minCellCountToSpawnBooster = this.minCellCountsToSpawnBooster.length > 0
+            ? Math.min(...this.minCellCountsToSpawnBooster.map(pair => pair.number))
+            : Number.MAX_SAFE_INTEGER;
     }
     
     public getGridLock() : number {
@@ -39,6 +45,15 @@ export default class BlockManager extends cc.Component {
         this.inputLock += lockValue;
         if (this.inputLock == 0) 
             this.node.emit('OnBlocksDestroy', this);
+    }
+
+    private getMinimumCellCountToSpawnBooster(type: BlockType) : number {
+        for (let i = 0; i < this.minCellCountsToSpawnBooster.length; i++) {
+            const pair = this.minCellCountsToSpawnBooster[i];
+            if (pair.blockType === type)
+                return pair.number;
+        }
+        return Number.MAX_SAFE_INTEGER;
     }
 
     private onMouseDown(event: cc.Event.EventMouse) {
@@ -112,13 +127,13 @@ export default class BlockManager extends cc.Component {
 
 
     private getBoosterType(numberOfElements: number) : BlockType {
-        if (numberOfElements >= 8)
+        if (numberOfElements >= this.getMinimumCellCountToSpawnBooster(BlockType.MegaBomb))
             return BlockType.MegaBomb;
-        else if (numberOfElements >= 6)
+        else if (numberOfElements >= this.getMinimumCellCountToSpawnBooster(BlockType.Bomb))
             return BlockType.Bomb;
-        else if (numberOfElements >= 5)
+        else if (numberOfElements >= this.getMinimumCellCountToSpawnBooster(BlockType.RocketsVertical))
             return BlockType.RocketsVertical;
-        else if(numberOfElements >= 4)
+        else if (numberOfElements >= this.getMinimumCellCountToSpawnBooster(BlockType.RocketsHorizontal))
             return BlockType.RocketsHorizontal;
         else 
             return BlockType.Empty;
