@@ -1,70 +1,29 @@
 const { ccclass, property } = cc._decorator;
 
-import Grid from "../../Grid";
 import Cell from "../../Cell";
-import BlockManager from "../../BlocksManager";
 import SwitchBooster from "../Switch";
-import Switch from "../Switch";
-import BlockMovementController from "../../BlockMovementController";
+import Ability from "../Ability";
 
 @ccclass
-export default class SwitchAbility extends cc.Component {
-    @property(Grid)
-    private grid: Grid = null;
-
-    @property(BlockManager)
-    private blockManager: BlockManager = null;
-
-    @property(BlockMovementController)
-    private blockMovementController: BlockMovementController = null;
-
-    @property(cc.Node)
-    private iconNode: cc.Node = null;
-
-    private boosterEnabled: boolean = false;
+export default class SwitchAbility extends Ability {
     private animationPlaying: boolean = false;
-    private gridStable: boolean = false;
     private firstPickedCell: Cell = null;
     private secondPickedCell: Cell = null;
 
-    onLoad() {
-        if (this.iconNode) {
-            this.iconNode.on(cc.Node.EventType.MOUSE_DOWN, this.onIconClick, this);
-        }
-
+    protected override onLoad() {
+        super.onLoad();
+        
         const canvas = cc.find("Canvas");
         canvas.on(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this);
-
-        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
-
-        
-        if (this.blockMovementController) {
-            this.blockMovementController.node.on("OnGridStabilityChange", this.onGridStabilityChange, this);
-        }
     }
 
-    private onGridStabilityChange(change: boolean) {
-        this.gridStable = change;
-        cc.log("Grid stability changed to " + this.gridStable);
-    }
-
-    private onKeyDown(event: cc.Event.EventKeyboard) {
-        if (event.keyCode === cc.macro.KEY.space) {
-           this.onIconClick();
-        }
-    }
-
-    private onIconClick() {
+    protected override onIconClick() {
         const startBoosterEnabled = this.boosterEnabled;
         this.updateLock(!startBoosterEnabled);
         this.setEnabled(!this.boosterEnabled);
         if (this.boosterEnabled === startBoosterEnabled)
             this.updateLock(startBoosterEnabled);
 
-    }
-
-    private updateLock(value: boolean) {
-        this.blockManager.lockGrid(value ? 1 : -1);
     }
 
     private setEnabled(value: boolean) {

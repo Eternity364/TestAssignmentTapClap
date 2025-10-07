@@ -30,10 +30,13 @@ export default class BlockManager extends cc.Component {
     public getGridLock() : number {
         return this.inputLock;
     }
+    
+    public getMinCellCountToDestroy() : number {
+        return this.minCellCountToDestroy;
+    }
 
     public lockGrid(lockValue: number) {
         this.inputLock += lockValue;
-        cc.log("Grid lock changed to " + this.inputLock);
         if (this.inputLock == 0) 
             this.node.emit('OnBlocksDestroy', this);
     }
@@ -52,8 +55,8 @@ export default class BlockManager extends cc.Component {
     }
 
     private tryDestroyZoneAndSpawnBooster(event: cc.Event.EventMouse) {
-        const cells: Cell[] = this.grid.getConnectedCellsOfSameType(event);
         const cellUnderMouse: Cell = this.grid.getCellAtMousePosition(event);
+        const cells: Cell[] = this.grid.getConnectedCellsOfSameType(cellUnderMouse);
 
         if (cells.length >= this.minCellCountToDestroy) {
             if (cells.length < this.minCellCountToSpawnBooster) {

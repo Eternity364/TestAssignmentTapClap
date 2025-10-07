@@ -3,7 +3,7 @@ import BoosterBlock from "../BoosterBlock";
 import Cell from "../Cell";
 import Grid from "../Grid";
 
-const { ccclass, property } = cc._decorator;
+const { ccclass } = cc._decorator;
 
 @ccclass("Bomb")
 export default class Bomb implements Booster {
@@ -30,7 +30,6 @@ export default class Bomb implements Booster {
         const { row: startRow, col: startCol } = startCoords;
         const affectedCells: Cell[] = [];
 
-        // Collect horizontally and vertically affected cells
         for (let r = -this.explosionRadius; r <= this.explosionRadius; r++) {
             const cellH = grid.getCellAt(startRow + r, startCol);
             if (cellH) affectedCells.push(cellH);
@@ -39,7 +38,6 @@ export default class Bomb implements Booster {
             if (cellV) affectedCells.push(cellV);
         }
 
-        // Collect diagonal cells (R - 1 range)
         const diagonalRadius = Math.max(0, this.explosionRadius - 1);
         for (let i = 1; i <= diagonalRadius; i++) {
             const c1 = grid.getCellAt(startRow + i, startCol + i);
@@ -49,10 +47,8 @@ export default class Bomb implements Booster {
             [c1, c2, c3, c4].forEach(c => { if (c) affectedCells.push(c); });
         }
 
-        // Remove duplicates and the start cell (optional)
         const uniqueCells = Array.from(new Set(affectedCells)).filter(c => c !== startCell);
 
-        // Apply destruction with small radial delay
         const delayPerStep = 0.05;
         uniqueCells.forEach((cell) => {
             const coords = grid.getCellRowCol(cell);

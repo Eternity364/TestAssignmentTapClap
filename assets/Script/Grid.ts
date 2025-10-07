@@ -2,6 +2,7 @@ const { ccclass, property } = cc._decorator;
 import BlockFactory from './BlockFactory';
 import Block from './Block';
 import Cell from './Cell';
+import BoosterBlock from './BoosterBlock';
 
 @ccclass
 export default class Grid extends cc.Component {
@@ -39,6 +40,16 @@ export default class Grid extends cc.Component {
         let cellCoord = this.getCellCoords(cell);
         let position = this.getCellPosition(cellCoord.y, cellCoord.x);
         block.node.position = setPosition ? position : block.node.position;
+    }
+
+    public getAllCells() : Cell[] {
+        let allCells: Cell[] = [];
+        for (let row = 0; row < this.height; row++) {
+            for (let col = 0; col < this.width; col++) {
+                allCells.push(this.cells[row][col])
+            }
+        }
+        return allCells;
     }
 
     public getCellSize() : number {
@@ -116,10 +127,46 @@ export default class Grid extends cc.Component {
 
     public getParent(): cc.Node {
         return this.parentNode1;
-    } 
+    }
+    
+    public hasAnyBoostersOnBoard(): boolean {
+        for (let row = 0; row < this.height; row++) {
+            for (let col = 0; col < this.width; col++) {
+                const cell = this.cells[row][col];
+                const block = cell.getBlock();
+                if (!block) continue;
+                if (block instanceof BoosterBlock) return true;
+            }
+        }
+        return false;
+    }
 
-    public getConnectedCellsOfSameType(mouseEvent: cc.Event.EventMouse): Cell[] {
-        const startCell = this.getCellAtMousePosition(mouseEvent);
+
+    public hasAnyGroupWithSize(size: number): boolean {
+        if (!this.cells || this.cells.length === 0) return false;
+
+        const visited = new Set<Cell>();
+
+        for (let row = 0; row < this.height; row++) {
+            for (let col = 0; col < this.width; col++) {
+                const cell = this.cells[row][col];
+                if (!cell || !cell.isOccupied() || visited.has(cell)) continue;
+
+                const group = this.getConnectedCellsOfSameType(cell);
+
+                for (const g of group) visited.add(g);
+
+                if (group.length >= size) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    public getConnectedCellsOfSameType(startCell: Cell): Cell[] {
         if (!startCell || !startCell.getBlock()) return [];
 
         const startBlock = startCell.getBlock();
