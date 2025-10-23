@@ -45,28 +45,36 @@ export default class Block extends cc.Component {
             }
         }
         
-        this.node.scale = 1;
-        this.node.opacity = 255;
-        this.visualNode.node.y = 0;
+        this.visualNode.node.scale = 1;
+        this.visualNode.node.opacity = 255;
         this.node.zIndex = this.originalZIndex;
 
         this.visualNode.spriteFrame = sprite;
     }
 
-    public playLandingAnimation() {
+        public playLandingAnimation() {
         if (!this.visualNode) return;
 
         const node = this.visualNode.node;
-        const originalY = node.y;
 
         cc.Tween.stopAllByTarget(node);
 
+        // ensure neutral start
+        node.scaleX = 1;
+        node.scaleY = 1;
+
         cc.tween(node)
-            .to(0.08, { y: originalY + 15 }, { easing: "linear" })
-            .to(0.12, { y: originalY }, { easing: "easeOutElastic" })
+            // quick squash: short and sharp
+            .to(0.12, { scaleY: 0.6, scaleX: 1.05 }, { easing: "sineOut" })
+            // big bounce: stretch up and narrow horizontally (jelly peak)
+            .to(0.18, { scaleY: 1.15, scaleX: 0.87 }, { easing: "backOut" })
+            // damped oscillations to settle (jelly wobble)
+            .to(0.12, { scaleY: 0.9,  scaleX: 1.06 }, { easing: "sineInOut" })
+            .to(0.12, { scaleY: 1.04, scaleX: 0.95 }, { easing: "sineInOut" })
+            .to(0.10, { scaleY: 0.98, scaleX: 1.02 }, { easing: "sineInOut" })
+            .to(0.08, { scaleY: 1.00, scaleX: 1.00 }, { easing: "sineOut" })
             .start();
     }
-
     public setZIndexToMaximum(max: boolean) {
         this.node.zIndex = max ? 9999 : this.originalZIndex;
     }
@@ -106,20 +114,20 @@ export default class Block extends cc.Component {
         this.node.zIndex = 9999;
 
         cc.Tween.stopAllByTarget(node);
+        cc.Tween.stopAllByTarget(this.node);
+
+        const Finish = () => {
+            ObjectPool.Instance.returnObject(this.node);
+            if (onComplete) onComplete();
+        };
+
+        cc.tween(this.node)
+            .to(duration, { position: target }, { easing: "sineInOut" })
+            .start();
 
         cc.tween(node)
-            .to(
-                duration,
-                {
-                    position: target,
-                    opacity: 0
-                },
-                { easing: "sineInOut" }
-            )
-            .call(() => {
-                ObjectPool.Instance.returnObject(this.node);
-                if (onComplete) onComplete();
-            })
+            .to(duration, { opacity: 0 }, { easing: "sineInOut" })
+            .call(Finish)
             .start();
     }
 

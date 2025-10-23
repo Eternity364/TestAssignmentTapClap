@@ -739,7 +739,7 @@
     },
     "_enabled": true,
     "blockPrefab": {
-      "__uuid__": "31c8aecf-0975-4238-9fe8-9a84b54e4bfb"
+      "__uuid__": "5cc32c54-275a-4f01-ac4e-edb21cf75bc0"
     },
     "blockPairs": [
       {
@@ -905,28 +905,28 @@
     "__type__": "BlockPrefabPair",
     "blockType": 4,
     "prefab": {
-      "__uuid__": "dad9cd2b-b462-4246-9fe9-fe0bfce75c16"
+      "__uuid__": "1cf38a0e-08fb-4ae4-bb20-dad52226855a"
     }
   },
   {
     "__type__": "BlockPrefabPair",
     "blockType": 5,
     "prefab": {
-      "__uuid__": "dad9cd2b-b462-4246-9fe9-fe0bfce75c16"
+      "__uuid__": "1cf38a0e-08fb-4ae4-bb20-dad52226855a"
     }
   },
   {
     "__type__": "BlockPrefabPair",
     "blockType": 6,
     "prefab": {
-      "__uuid__": "7cfd1a5d-b1e4-4dfd-8b42-bf713353a3ed"
+      "__uuid__": "15fa3c23-d123-47d7-b023-523280c6e04d"
     }
   },
   {
     "__type__": "BlockPrefabPair",
     "blockType": 7,
     "prefab": {
-      "__uuid__": "86ac284c-4f81-40dc-a2bd-62c5992a74b1"
+      "__uuid__": "0c226e27-d115-4f32-b02d-b4c836b5555c"
     }
   },
   {

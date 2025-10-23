@@ -39,6 +39,7 @@ export default class BlockManager extends cc.Component {
         this.minCellCountToSpawnBooster = this.minCellCountsToSpawnBooster.length > 0
             ? Math.min(...this.minCellCountsToSpawnBooster.map(pair => pair.number))
             : Number.MAX_SAFE_INTEGER;
+        //this.minCellCountToSpawnBooster = Number.MAX_SAFE_INTEGER;
     }
     
     public test(event) {
