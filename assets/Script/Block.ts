@@ -24,19 +24,25 @@ export default class Block extends cc.Component {
 
     @property(cc.Sprite)
     public visualNode: cc.Sprite | null = null;
-    
+
+    @property(cc.ParticleSystem)
+    public explosionParticles: cc.ParticleSystem | null = null;
+
     public activeTween: cc.Tween<cc.Node> | null = null;
     public targetCell: Cell | null = null;
     public originalZIndex: number = 0;
+    private particleColor: cc.Color = cc.Color.WHITE;
 
     public picked: boolean = false;
+    protected isBooster = false;
 
     protected start(): void {
         this.originalZIndex = this.node.zIndex;
     }
 
-    public init(type: BlockType, sprite: cc.SpriteFrame) {
+    public init(type: BlockType, sprite: cc.SpriteFrame, particleColor: cc.Color): void {
         this.blockType = type;
+        this.particleColor = particleColor;
 
         if (!this.visualNode) {
             this.visualNode = this.getComponent(cc.Sprite);
@@ -45,11 +51,15 @@ export default class Block extends cc.Component {
             }
         }
         
-        this.visualNode.node.scale = 1;
-        this.visualNode.node.opacity = 255;
-        this.node.zIndex = this.originalZIndex;
 
         this.visualNode.spriteFrame = sprite;
+        this.visualNode.node.scale = 1;
+        this.visualNode.node.opacity = 255;
+        this.visualNode.node.active = true;
+        this.node.zIndex = this.originalZIndex;        
+        const mat = this.visualNode.getMaterial(0);      
+        mat.setProperty("alphaMultiplier", 1);
+        mat.setProperty("progress", 0);
     }
 
         public playLandingAnimation() {
@@ -59,16 +69,12 @@ export default class Block extends cc.Component {
 
         cc.Tween.stopAllByTarget(node);
 
-        // ensure neutral start
         node.scaleX = 1;
         node.scaleY = 1;
 
         cc.tween(node)
-            // quick squash: short and sharp
             .to(0.12, { scaleY: 0.6, scaleX: 1.05 }, { easing: "sineOut" })
-            // big bounce: stretch up and narrow horizontally (jelly peak)
             .to(0.18, { scaleY: 1.15, scaleX: 0.87 }, { easing: "backOut" })
-            // damped oscillations to settle (jelly wobble)
             .to(0.12, { scaleY: 0.9,  scaleX: 1.06 }, { easing: "sineInOut" })
             .to(0.12, { scaleY: 1.04, scaleX: 0.95 }, { easing: "sineInOut" })
             .to(0.10, { scaleY: 0.98, scaleX: 1.02 }, { easing: "sineInOut" })
@@ -82,6 +88,12 @@ export default class Block extends cc.Component {
     public playDestroyAnimation(onComplete?: () => void) {
         if (!this.visualNode) return;
 
+        if (this.isBooster) {
+            if (onComplete) onComplete();
+            ObjectPool.Instance.returnObject(this.node);
+            return;
+        }
+
         const node = this.visualNode.node;
         node.scale = 1;
         node.opacity = 255;
@@ -89,20 +101,63 @@ export default class Block extends cc.Component {
 
         cc.Tween.stopAllByTarget(node);
 
-        cc.tween(node)
-            .parallel(
-                cc.tween().to(0.12, { scale: 1.15 }, { easing: "sineOut" }),
-                cc.tween().to(0.12, { opacity: 255 }, { easing: "sineOut" })
-            )
-            .parallel(
-                cc.tween().to(0.25, { scale: 0.0 }, { easing: "backIn" }),
-                cc.tween().to(0.4, { opacity: 0 }, { easing: "sineIn" })
-            )
+        const mat = this.visualNode.getMaterial(0);
+
+        const progressObj = { value: 0 };
+        const alphaObj = { value: 1 };
+
+        const updateAction = cc.repeatForever(cc.sequence(
+            cc.callFunc(() => {
+                mat.setProperty("progress", progressObj.value);
+                mat.setProperty("alphaMultiplier", alphaObj.value);
+            }),
+            cc.delayTime(0)
+        ));
+
+        this.node.runAction(updateAction);
+
+        cc.tween(progressObj)
+            .to(0.2, { value: 1 }, { easing: "sineOut" })
             .call(() => {
-                ObjectPool.Instance.returnObject(this.node);
-                if (onComplete) onComplete();
+                cc.tween(alphaObj)
+                    .to(0.1, { value: 0 }, { easing: "sineIn" })
+                    .call(() => {
+                        this.node.stopAction(updateAction);
+                        if (onComplete) onComplete();
+                        node.active = false;
+                    })
+                    .start();
             })
             .start();
+
+        
+        this.explosionParticles.startColor = this.particleColor;
+        this.explosionParticles.endColor = this.particleColor;
+            
+        
+        cc.tween(this.node)
+            .delay(0.1)
+            .call(() => {   
+                this.explosionParticles.node.active = true;
+                this.explosionParticles.resetSystem();
+                let maxLifetime = this.explosionParticles.life + this.explosionParticles.lifeVar;
+                let waitTime = maxLifetime + 0.1;
+                cc.tween(this.node)
+                    .delay(waitTime)
+                    .call(() => {
+                        ObjectPool.Instance.returnObject(this.node);
+                        this.explosionParticles.node.active = false;
+                    })
+                    .start();
+            })
+            .start();
+        
+        // function randomColor(particleColor, variance = 3) {
+        //     let r = Math.min(255, Math.max(0, particleColor.getR() + (Math.random()*2 - 1)*variance));
+        //     let g = Math.min(255, Math.max(0, particleColor.getG() + (Math.random()*2 - 1)*variance));
+        //     let b = Math.min(255, Math.max(0, particleColor.getB() + (Math.random()*2 - 1)*variance));
+        //     return new cc.Color(r, g, b);
+        // }
     }
 
     public panToAndDestroyAnimation(target: cc.Vec3, duration: number, onComplete?: () => void) {

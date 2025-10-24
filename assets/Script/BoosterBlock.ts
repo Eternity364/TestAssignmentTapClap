@@ -11,6 +11,7 @@ export default abstract class BoosterBlock extends Block {
 
     public setBooster(booster: Booster): void {
         this.booster = booster;
+        this.isBooster = true;
     } 
 
     public executeBooster(

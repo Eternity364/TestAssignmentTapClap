@@ -1,0 +1,40 @@
+{
+  "__type__": "cc.Material",
+  "_name": "Explosion",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "54e899e0-822b-4b30-ac38-f6f96719a307"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "props": {
+        "texture": {
+          "__uuid__": "8a2f921c-26f5-4471-8c4a-238eac836d2c"
+        },
+        "explosionProgress": 0,
+        "noiseStrength": 0.15,
+        "noiseScale": 2,
+        "noiseTexture": {
+          "__uuid__": "a320bc01-2212-403d-b581-6f3ab353a9b3"
+        },
+        "alphaThreshold1": 0.85,
+        "tintColor": {
+          "__type__": "cc.Vec4",
+          "x": 1,
+          "y": 0,
+          "z": 0,
+          "w": 1
+        },
+        "glowIntensity": 5,
+        "progress": 0,
+        "alphaMultiplier": 1
+      },
+      "defines": {
+        "USE_TEXTURE": true,
+        "USE_ALPHA_TEST": true
+      }
+    }
+  }
+}

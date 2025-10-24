@@ -1,0 +1,65 @@
+CCEffect %{
+  techniques:
+  - passes:
+      - vert: vs
+        frag: fs
+        blendState:
+          targets:
+            - blend: true
+              srcBlend: src_alpha
+              dstBlend: one_minus_src_alpha
+        rasterizerState:
+          cullMode: none
+        defines:
+          USE_TEXTURE: 1      # required for sprite mainTexture
+        properties:
+          texture: { value: white }
+          glowIntensity: { value: 1.2 }
+          progress: { value: 0.0 }
+          alphaMultiplier: { value: 1.0 }  # new uniform for alpha
+%}
+
+CCProgram vs %{
+precision highp float;
+#include <cc-global>
+#include <cc-local>
+
+in vec3 a_position;
+in vec2 a_uv0;
+out vec2 v_uv0;
+
+void main () {
+    v_uv0 = a_uv0;
+    gl_Position = cc_matProj * cc_matView * cc_matWorld * vec4(a_position, 1.0);
+}
+%}
+
+CCProgram fs %{
+precision highp float;
+#include <alpha-test>
+
+in vec2 v_uv0;
+uniform sampler2D texture;
+uniform Values {
+    float glowIntensity;
+    float progress;
+    float alphaMultiplier;   // new
+};
+
+void main () {
+    vec4 col = texture(texture, v_uv0);
+
+    // interpolate original color to white
+    col.rgb = mix(col.rgb, vec3(1.0), progress);
+
+    // simple glow
+    float brightness = dot(col.rgb, vec3(0.333));
+    float glow = smoothstep(0.5, 1.0, brightness) * glowIntensity * progress;
+    col.rgb += glow;
+
+    // apply alpha multiplier
+    col.a *= alphaMultiplier;
+
+    gl_FragColor = col;
+}
+%}

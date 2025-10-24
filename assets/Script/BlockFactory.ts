@@ -1,6 +1,6 @@
 const { ccclass, property } = cc._decorator;
 import Block, { BlockType } from './Block';
-import { BlockSpritePair, BlockPrefabPair } from './PairStructs';
+import { BlockSpritePair, BlockPrefabPair, BlockColorPair } from './PairStructs';
 import ObjectPool from './ObjectPool';
 
 @ccclass
@@ -11,7 +11,10 @@ export default class BlockFactory extends cc.Component {
 
     @property([BlockSpritePair])
     private blockPairs = [];
-    
+
+    @property([BlockColorPair])
+    private blockColors = [];
+
     @property([BlockPrefabPair])
     private boosters = [];
 
@@ -21,7 +24,7 @@ export default class BlockFactory extends cc.Component {
     }
 
     public createBlockOfType(type: BlockType, parentNode: cc.Node): Block {
-        const pair = this.blockPairs[type];
+        const pair = this.blockPairs.find(blockPair => blockPair.blockType === Number(type));
 
         let prefab = this.getBoosterOfType(type);
         if (!prefab)
@@ -30,7 +33,12 @@ export default class BlockFactory extends cc.Component {
         blockNode.setParent(parentNode);
 
         const blockComp = blockNode.getComponent(Block);
-        blockComp.init(pair.blockType, pair.sprite);
+        let color = cc.Color.WHITE;
+        if (this.isRegular(type)) {
+            const _colorPair = this.blockColors.find(colorPair => colorPair.blockType === Number(type));
+            color = _colorPair.color;
+        }
+        blockComp.init(pair.blockType, pair.sprite, color);
 
         return blockComp;
     }

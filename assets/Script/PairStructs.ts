@@ -43,4 +43,18 @@ const BlockNumberPair = cc.Class({
     }
 });
 
-export { BlockSpritePair, BlockPrefabPair, BlockNumberPair };
+const BlockColorPair = cc.Class({
+    name: 'BlockColorPair',
+    properties: {
+        blockType: {
+            default: BlockType.Empty,
+            type: cc.Enum(BlockType)
+        },
+        color: {
+            default: null,
+            type: cc.Color
+        }
+    }
+});
+
+export { BlockSpritePair, BlockPrefabPair, BlockNumberPair, BlockColorPair };

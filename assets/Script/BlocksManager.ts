@@ -170,7 +170,10 @@ export default class BlockManager extends cc.Component {
 
         if (!block) return;
         
-        block.playDestroyAnimation();
+        this.lockGrid(1);
+        block.playDestroyAnimation(() => {
+            this.lockGrid(-1);
+        });
         this.destroyBlockInCell(cell);
         const isBooster = !this.blockFactory.isRegular(block.blockType);
         if (isBooster) {
