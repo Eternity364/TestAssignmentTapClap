@@ -194,6 +194,10 @@
     "visualNode": {
       "__id__": 3
     },
+    "explosionParticles": null,
+    "animationPrefab": {
+      "__uuid__": "77018d7e-2e99-4e6f-bb2f-3fddfc1a9dea"
+    },
     "_id": ""
   },
   {
