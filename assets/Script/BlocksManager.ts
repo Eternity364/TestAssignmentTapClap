@@ -151,6 +151,7 @@ export default class BlockManager extends cc.Component {
             return BlockType.RocketsHorizontal;
         else 
             return BlockType.Empty;
+        //return BlockType.RocketsHorizontal;
     }
 
     private executeBooster(boosterBlock: BoosterBlock, cell: Cell) {

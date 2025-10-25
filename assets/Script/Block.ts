@@ -54,7 +54,6 @@ export default class Block extends cc.Component {
 
         this.visualNode.spriteFrame = sprite;
         this.visualNode.node.scale = 1;
-        this.visualNode.node.opacity = 255;
         this.visualNode.node.active = true;
         this.node.zIndex = this.originalZIndex;        
         const mat = this.visualNode.getMaterial(0);      
@@ -82,7 +81,7 @@ export default class Block extends cc.Component {
             .start();
     }
     public setZIndexToMaximum(max: boolean) {
-        this.node.zIndex = max ? 9999 : this.originalZIndex;
+        this.node.zIndex = max ? 9000 : this.originalZIndex;
     }
 
     public playDestroyAnimation(onComplete?: () => void) {
@@ -97,7 +96,7 @@ export default class Block extends cc.Component {
         const node = this.visualNode.node;
         node.scale = 1;
         node.opacity = 255;
-        this.node.zIndex = 9999;
+        this.node.zIndex = 9000;
 
         cc.Tween.stopAllByTarget(node);
 
@@ -151,13 +150,6 @@ export default class Block extends cc.Component {
                     .start();
             })
             .start();
-        
-        // function randomColor(particleColor, variance = 3) {
-        //     let r = Math.min(255, Math.max(0, particleColor.getR() + (Math.random()*2 - 1)*variance));
-        //     let g = Math.min(255, Math.max(0, particleColor.getG() + (Math.random()*2 - 1)*variance));
-        //     let b = Math.min(255, Math.max(0, particleColor.getB() + (Math.random()*2 - 1)*variance));
-        //     return new cc.Color(r, g, b);
-        // }
     }
 
     public panToAndDestroyAnimation(target: cc.Vec3, duration: number, onComplete?: () => void) {
@@ -166,7 +158,7 @@ export default class Block extends cc.Component {
         const node = this.visualNode.node;
         node.scale = 1;
         node.opacity = 255;
-        this.node.zIndex = 9999;
+        this.node.zIndex = 9000;
 
         cc.Tween.stopAllByTarget(node);
         cc.Tween.stopAllByTarget(this.node);
@@ -180,9 +172,25 @@ export default class Block extends cc.Component {
             .to(duration, { position: target }, { easing: "sineInOut" })
             .start();
 
-        cc.tween(node)
-            .to(duration, { opacity: 0 }, { easing: "sineInOut" })
-            .call(Finish)
+        const mat = this.visualNode.getMaterial(0);
+
+        const alphaObj = { value: 1 };
+
+        const updateAction = cc.repeatForever(cc.sequence(
+            cc.callFunc(() => {
+            mat.setProperty("alphaMultiplier", alphaObj.value);
+            }),
+            cc.delayTime(0)
+        ));
+
+        this.node.runAction(updateAction);
+
+        cc.tween(alphaObj)
+            .to(duration, { value: 0 }, { easing: "sineInOut" })
+            .call(() => {
+                this.node.stopAction(updateAction);
+                Finish();
+            })
             .start();
     }
 
