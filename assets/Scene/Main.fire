@@ -995,7 +995,7 @@
       "__id__": 34
     },
     "_enabled": true,
-    "maxTurnsCount": 20,
+    "maxTurnsCount": 30,
     "statisticsPanel": {
       "__id__": 35
     },
@@ -1375,7 +1375,7 @@
     "statisticsPanel": {
       "__id__": 35
     },
-    "targetPoints": 20000,
+    "targetPoints": 30000,
     "_id": "87AUzbcYdDMZ4EHt60m9n/"
   },
   {

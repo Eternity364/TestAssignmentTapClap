@@ -52,6 +52,7 @@ export default class Block extends cc.Component {
         }
         
 
+        this.visualNode.node.active = true;
         this.visualNode.spriteFrame = sprite;
         this.visualNode.node.scale = 1;
         this.visualNode.node.active = true;
