@@ -11,7 +11,7 @@ export default class StatisticsPanel extends cc.Component {
 
     public SetTurns(current: number, max: number): void {
         if (!this.turnsLabel) return;
-        this.turnsLabel.string = `${current} / ${max}`;
+        this.turnsLabel.string = `${current}`;
     }
 
     public SetPoints(current: number, target: number): void {
