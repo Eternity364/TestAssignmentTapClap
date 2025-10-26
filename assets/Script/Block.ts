@@ -81,8 +81,14 @@ export default class Block extends cc.Component {
             .to(0.08, { scaleY: 1.00, scaleX: 1.00 }, { easing: "sineOut" })
             .start();
     }
+
     public setZIndexToMaximum(max: boolean) {
         this.node.zIndex = max ? 9000 : this.originalZIndex;
+    }
+
+    public setOpacity(value: number) {
+        const mat = this.visualNode.getMaterial(0);
+        mat.setProperty("alphaMultiplier", value);
     }
 
     public playDestroyAnimation(onComplete?: () => void) {

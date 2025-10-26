@@ -83,9 +83,11 @@ export default class BlockMovementController extends cc.Component {
                 const targetRow = i;
                 const block = this.blockFactory.createRandom(this.grid.getParent());
 
+                const initialRow = -2 - i;
                 const targetPos = this.grid.getCellPosition(targetRow, col);
-                const spawnY = targetPos.y + this.spawnHeightOffset;
+                const spawnY = this.grid.getCellPosition(0, col).y - this.grid.getCellSize() * initialRow;
                 block.node.position = cc.v3(targetPos.x, spawnY, 0);
+                block.setOpacity(0);
 
                 this.fallingBlocks.push({ block, col });
             }
@@ -128,7 +130,7 @@ export default class BlockMovementController extends cc.Component {
     private adjustFallingBlocks(width: number, height: number): void {
         if (!this.grid) return;
 
-        const maxColumnDelay = 0.1; // seconds, tweak as desired
+        const maxColumnDelay = 0.1;
 
         const blocksPerColumn: { block: Block; col: number }[][] = Array(width)
             .fill(0)
@@ -184,5 +186,34 @@ export default class BlockMovementController extends cc.Component {
 
         block.targetCell = this.grid.getCellAt(targetRow, targetCol);
         this.fallingBlocks.push({ block, col: targetCol });
+    }
+
+    update(dt: number) {
+        this.updateFallingBlocksOpacity();
+    }
+
+    private updateFallingBlocksOpacity() {
+        if (!this.grid || this.fallingBlocks.length === 0) return;
+
+        const cellSize = this.grid.getCellSize();
+        const referencePos = this.grid
+            .getCellPosition(0, 0)
+            .add(cc.v3(0, 2 * cellSize, 0));
+
+        const upperYBoundary = referencePos.y;
+        const lowerY = this.grid.getCellPosition(0, 0).y;
+
+        for (const { block } of this.fallingBlocks) {
+            const blockY = block.node.y;
+
+            if (blockY > upperYBoundary) {
+                block.setOpacity(0);
+            } else if (blockY < lowerY) {
+                block.setOpacity(1);
+            } else {
+                const t = (upperYBoundary - blockY) / (upperYBoundary - lowerY);
+                block.setOpacity(t);
+            }
+        }
     }
 }

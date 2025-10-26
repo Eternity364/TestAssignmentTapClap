@@ -78,7 +78,10 @@ export default class MegaBombBooster implements Booster {
                         duration,
                         () => {
                             TryToDestroyBlockInCell(cell);
-                            projectile.destroy();
+                            cc.tween(projectile)
+                                .to(0.3, { opacity: 0 })
+                                .call(() => projectile.destroy())
+                                .start();
                         },
                         true,
                         180,
