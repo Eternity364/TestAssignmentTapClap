@@ -128,6 +128,8 @@ export default class BlockMovementController extends cc.Component {
     private adjustFallingBlocks(width: number, height: number): void {
         if (!this.grid) return;
 
+        const maxColumnDelay = 0.1; // seconds, tweak as desired
+
         const blocksPerColumn: { block: Block; col: number }[][] = Array(width)
             .fill(0)
             .map(() => []);
@@ -145,9 +147,12 @@ export default class BlockMovementController extends cc.Component {
             const flyingBlocks = blocksPerColumn[col];
             flyingBlocks.sort((a, b) => a.block.node.position.y - b.block.node.position.y);
 
+            const columnDelay = Math.random() * maxColumnDelay;
+
             if (mostBottomTargetRow[col] != Number.POSITIVE_INFINITY) {
                 for (let row = mostBottomTargetRow[col]; row >= 0; row--) {
-                    this.animateBlockToCell(flyingBlocks[counter].block, row, col);
+                    if (counter >= flyingBlocks.length) break;
+                    this.animateBlockToCell(flyingBlocks[counter].block, row, col, columnDelay);
                     counter++;
                 }
             }
@@ -157,14 +162,14 @@ export default class BlockMovementController extends cc.Component {
             this.node.emit('OnGridStabilityChange', false);
     }
 
-    private animateBlockToCell(block: Block, targetRow: number, targetCol: number) {
+    private animateBlockToCell(block: Block, targetRow: number, targetCol: number, columnDelay: number = 0) {
         const targetPos = this.grid.getCellPosition(targetRow, targetCol);
         const distance = block.node.position.sub(targetPos).mag();
         const duration = distance / this.fallSpeed;
 
         if (block.activeTween) block.activeTween.stop();
         block.activeTween = cc.tween(block.node)
-            .to(duration, { position: targetPos }, { easing: 'linear' })
+            .to(duration + columnDelay, { position: targetPos }, { easing: 'linear' })
             .call(() => {
                 const targetCell = this.grid.getCellAt(targetRow, targetCol);
                 targetCell.setBlock(block);
