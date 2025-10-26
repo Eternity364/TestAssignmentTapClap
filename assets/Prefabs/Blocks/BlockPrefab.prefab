@@ -378,6 +378,12 @@
     "explosionParticles": {
       "__id__": 6
     },
+    "destroyBlock": {
+      "__uuid__": "c85dbb72-ca6d-4703-8ce7-6db63dc64b93"
+    },
+    "land": {
+      "__uuid__": "6ce57e81-1272-4ba1-9a6f-051f43f12ef8"
+    },
     "_id": ""
   },
   {

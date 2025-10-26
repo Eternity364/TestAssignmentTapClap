@@ -1,11 +1,15 @@
 const { ccclass, property } = cc._decorator;
 
+import AudioController from "../../AudioManager";
 import Cell from "../../Cell";
 import Ability from "../Ability";
 import SwitchBooster from "../Switch";
 
 @ccclass
 export default class ShuffleAbility extends Ability {
+    @property(cc.AudioClip)
+    private shuffle: cc.AudioClip = null;
+    
     private animationPlaying: boolean = false;
 
     protected override onLoad() {
@@ -74,7 +78,8 @@ export default class ShuffleAbility extends Ability {
             const delay = Math.random() * 0.2;
 
             this.scheduleOnce(() => {
-                SwitchBooster.swapPickedBlocks(cellA, cellB, onPairFinished);
+                AudioController.Instance.playSound(this.shuffle);
+                SwitchBooster.swapPickedBlocks(cellA, cellB, 0.5, onPairFinished);
             }, delay);
         }
     }

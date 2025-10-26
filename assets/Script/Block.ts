@@ -1,3 +1,4 @@
+import AudioController from "./AudioManager";
 import Cell from "./Cell";
 import ObjectPool from "./ObjectPool";
 
@@ -27,6 +28,12 @@ export default class Block extends cc.Component {
 
     @property(cc.ParticleSystem)
     public explosionParticles: cc.ParticleSystem | null = null;
+
+    @property(cc.AudioClip)
+    destroyBlock: cc.AudioClip = null;
+
+    @property(cc.AudioClip)
+    land: cc.AudioClip = null;
 
     public activeTween: cc.Tween<cc.Node> | null = null;
     public targetCell: Cell | null = null;
@@ -62,7 +69,7 @@ export default class Block extends cc.Component {
         mat.setProperty("progress", 0);
     }
 
-        public playLandingAnimation() {
+    public playLandingAnimation() {
         if (!this.visualNode) return;
 
         const node = this.visualNode.node;
@@ -71,6 +78,8 @@ export default class Block extends cc.Component {
 
         node.scaleX = 1;
         node.scaleY = 1;
+
+        AudioController.Instance.playSound(this.land);
 
         cc.tween(node)
             .to(0.12, { scaleY: 0.6, scaleX: 1.05 }, { easing: "sineOut" })
@@ -91,8 +100,9 @@ export default class Block extends cc.Component {
         mat.setProperty("alphaMultiplier", value);
     }
 
-    public playDestroyAnimation(onComplete?: () => void) {
-        if (!this.visualNode) return;
+    public playDestroyAnimation(onComplete?: () => void) {  
+        if (this.destroyBlock)      
+            AudioController.Instance.playSound(this.destroyBlock);
 
         if (this.isBooster) {
             if (onComplete) onComplete();

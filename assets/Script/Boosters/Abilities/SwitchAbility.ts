@@ -3,9 +3,13 @@ const { ccclass, property } = cc._decorator;
 import Cell from "../../Cell";
 import SwitchBooster from "../Switch";
 import Ability from "../Ability";
+import AudioController from "../../AudioManager";
 
 @ccclass
 export default class SwitchAbility extends Ability {
+    @property(cc.AudioClip)
+    private switchSound: cc.AudioClip = null;
+
     private animationPlaying: boolean = false;
     private firstPickedCell: Cell = null;
     private secondPickedCell: Cell = null;
@@ -84,7 +88,8 @@ export default class SwitchAbility extends Ability {
             this.secondPickedCell = cell;
             block.setPickedStatus(true);
             this.onUsed();
-            SwitchBooster.swapPickedBlocks(this.firstPickedCell, this.secondPickedCell, () => {
+            AudioController.Instance.playSound(this.switchSound);
+            SwitchBooster.swapPickedBlocks(this.firstPickedCell, this.secondPickedCell, 1.3, () => {
                 this.animationPlaying = false;
                 this.firstPickedCell = null;
                 this.secondPickedCell = null;

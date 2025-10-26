@@ -195,10 +195,12 @@
       "__id__": 3
     },
     "explosionParticles": null,
+    "destroyBlock": {
+      "__uuid__": "4ac56b88-eaa9-4e9d-9131-be10633e4753"
+    },
     "animationPrefab": {
       "__uuid__": "77018d7e-2e99-4e6f-bb2f-3fddfc1a9dea"
     },
-    "animationSpeed": 1,
     "_id": ""
   },
   {

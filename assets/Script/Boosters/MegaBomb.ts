@@ -1,3 +1,4 @@
+import AudioController from "../AudioManager";
 import Booster, { DestroyBlockInCell, VoidCallback } from "../Booster";
 import BoosterBlock from "../BoosterBlock";
 import Cell from "../Cell";
@@ -10,6 +11,8 @@ const { ccclass } = cc._decorator;
 export default class MegaBombBooster implements Booster {
     private delayPerCell: number = 0.075;
     private animationPrefab: cc.Prefab = null;
+    private rocketLaunch: cc.AudioClip = null;
+    private rocketHit: cc.AudioClip = null;
 
     public Execute(
         activatedByTap: boolean,
@@ -69,6 +72,8 @@ export default class MegaBombBooster implements Booster {
                     projectile.setPosition(startPos);
                     projectile.zIndex = 9999;
 
+                    AudioController.Instance.playSound(this.rocketLaunch, false, 0.3);
+
                     const randomizedStrength = (concaveStrength  + (Math.random() / 4)) * (Math.random() > 0.5 ? 1 : -1)
 
                     SwitchBooster.MoveAlongBezierCurve(
@@ -77,6 +82,7 @@ export default class MegaBombBooster implements Booster {
                         targetPos,
                         duration,
                         () => {
+                            AudioController.Instance.playSound(this.rocketHit, false, 0.3);
                             TryToDestroyBlockInCell(cell);
                             cc.tween(projectile)
                                 .to(0.3, { opacity: 0 })
@@ -102,7 +108,9 @@ export default class MegaBombBooster implements Booster {
         this.delayPerCell = Math.max(0.005, delay);
     }
 
-    public init(prefab: cc.Prefab): void {
+    public init(prefab: cc.Prefab, rocketLaunch: cc.AudioClip, rocketHit: cc.AudioClip): void {
         this.animationPrefab = prefab;
+        this.rocketLaunch = rocketLaunch;
+        this.rocketHit = rocketHit;
     }
 }

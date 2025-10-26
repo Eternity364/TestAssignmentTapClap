@@ -557,12 +557,18 @@
       "__id__": 3
     },
     "explosionParticles": null,
+    "destroyBlock": {
+      "__uuid__": "2d42e26a-8528-4d7b-9299-13cb1a3b437e"
+    },
     "radius": 2,
     "preExplosionParticles": {
       "__id__": 6
     },
     "bombExplosionParticles": {
       "__id__": 9
+    },
+    "bombPreExplosion": {
+      "__uuid__": "a0d130e0-8877-4bb3-a243-b92e2e5ec762"
     },
     "_id": ""
   },

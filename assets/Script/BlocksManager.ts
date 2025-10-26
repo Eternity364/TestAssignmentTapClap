@@ -7,6 +7,7 @@ import BoosterBlock from './BoosterBlock';
 import { BlockNumberPair } from './PairStructs';
 import TurnsController from './TurnsController';
 import PointsController from './PointsController';
+import AudioController from './AudioManager';
 
 @ccclass
 export default class BlockManager extends cc.Component {
@@ -28,6 +29,9 @@ export default class BlockManager extends cc.Component {
 
     @property([BlockNumberPair])
     private minCellCountsToSpawnBooster = [];
+
+    @property(cc.AudioClip)
+    mergeBooster: cc.AudioClip = null;
 
     private inputLock : number = 0;
     private minCellCountToSpawnBooster: number;
@@ -101,6 +105,8 @@ export default class BlockManager extends cc.Component {
                     this.getBoosterType(cells.length),
                     this.grid.getParent()
                 );
+
+                AudioController.Instance.playSound(this.mergeBooster);
                 
                 const cellCoord = this.grid.getCellCoords(cellUnderMouse);
                 const boosterTarget = this.grid.getCellPosition(cellCoord.y, cellCoord.x);
@@ -151,7 +157,7 @@ export default class BlockManager extends cc.Component {
             return BlockType.RocketsHorizontal;
         else 
             return BlockType.Empty;
-        //return BlockType.RocketsHorizontal;
+        // return BlockType.Bomb;
     }
 
     private executeBooster(boosterBlock: BoosterBlock, cell: Cell, activatedByTap: boolean = false) {

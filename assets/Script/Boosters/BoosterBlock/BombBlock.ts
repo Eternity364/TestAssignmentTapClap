@@ -4,6 +4,7 @@ import Cell from "../../Cell";
 import Grid from "../../Grid";
 import { DestroyBlockInCell, VoidCallback } from "../../Booster";
 import ObjectPool from "../../ObjectPool";
+import AudioController from "../../AudioManager";
 
 const { ccclass, property } = cc._decorator;
 
@@ -18,6 +19,9 @@ export default class BombBlock extends BoosterBlock {
     @property(cc.ParticleSystem)
     private bombExplosionParticles: cc.ParticleSystem = null;
 
+    @property(cc.AudioClip)
+    private bombPreExplosion: cc.AudioClip = null;
+
     onLoad() {
         const booster = new BombBooster();
         booster.setRadius(this.radius);
@@ -28,12 +32,12 @@ export default class BombBlock extends BoosterBlock {
         if (onComplete) onComplete();
     }
 
-public override executeBooster(
-    activatedByTap: boolean,
-    startCell: Cell,
-    grid: Grid,
-    TryToDestroyBlockInCell: DestroyBlockInCell,
-    OnFinish: VoidCallback
+    public override executeBooster(
+        activatedByTap: boolean,
+        startCell: Cell,
+        grid: Grid,
+        TryToDestroyBlockInCell: DestroyBlockInCell,
+        OnFinish: VoidCallback
     ): void {
 
         const mat = this.visualNode.getMaterial(0);
@@ -66,6 +70,8 @@ public override executeBooster(
             this.bombExplosionParticles.node.active = true;
             this.bombExplosionParticles.resetSystem();
 
+            AudioController.Instance.playSound(this.destroyBlock);
+
             cc.tween(alphaObj)
                 .to(0.2, { value: 0 }, { easing: "sineIn" })
                 .call(() => {
@@ -88,6 +94,8 @@ public override executeBooster(
         }
         
         this.preExplosionParticles.node.active = true;
+
+        AudioController.Instance.playSound(this.bombPreExplosion);
 
         cc.tween(shakeObj)
             .to(1.5, { t: 1 }, {

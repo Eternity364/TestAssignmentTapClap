@@ -15,7 +15,6 @@ export default class SwitchBooster {
         orientationOffset: number = 0,
         concaveStrength: number = 0.5
     ): void {
-        // --- internal control point calculation ---
         const diff = end.clone().subtract(start);
         const distance = diff.len();
         const mid = start.clone().add(end).multiplyScalar(0.5);
@@ -25,7 +24,6 @@ export default class SwitchBooster {
         const arcHeight = Math.max(distance * concaveStrength, minArc);
         const control = mid.add(perpendicular.multiplyScalar(arcHeight));
 
-        // --- Bezier evaluation helpers ---
         const bezierPoint = (t: number, p0: cc.Vec3, p1: cc.Vec3, p2: cc.Vec3): cc.Vec3 => {
             const inv = 1 - t;
             const x = inv * inv * p0.x + 2 * inv * t * p1.x + t * t * p2.x;
@@ -42,7 +40,6 @@ export default class SwitchBooster {
         const obj = { t: 0 };
         const originalAngle = node.angle;
 
-        // --- Tween movement ---
         cc.tween(obj)
             .to(duration, { t: 1 }, {
                 easing: "sineInOut",
@@ -80,6 +77,7 @@ export default class SwitchBooster {
     public static swapPickedBlocks(
         cellA: Cell,
         cellB: Cell,
+        duration: number = 0.35,
         onFinish: VoidCallback,
         concaveStrength: number = 0.5
     ): void {
@@ -95,10 +93,8 @@ export default class SwitchBooster {
         cellA.setBlock(blockB);
         cellB.setBlock(blockA);
 
-        const duration = 0.35;
         const orientationOffset = 0;
 
-        // both movements share same control-point generation logic inside MoveAlongBezierCurve
         SwitchBooster.MoveAlongBezierCurve(
             blockA.node, posA, posB, duration, undefined, false, orientationOffset, concaveStrength
         );
