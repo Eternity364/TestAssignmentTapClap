@@ -33,14 +33,15 @@ export default class BlockFactory extends cc.Component {
         blockNode.setParent(parentNode);
 
         const blockComp = blockNode.getComponent(Block);
-        let color = cc.Color.WHITE;
-        if (this.isRegular(type)) {
-            const _colorPair = this.blockColors.find(colorPair => colorPair.blockType === Number(type));
-            color = _colorPair.color;
-        }
+        let color = this.getBlockColor(type);
         blockComp.init(pair.blockType, pair.sprite, color);
 
         return blockComp;
+    }
+
+    public getBlockColor(type: BlockType): cc.Color {
+        const colorPair = this.blockColors.find(pair => pair.blockType === Number(type));
+        return colorPair ? colorPair.color : cc.Color.WHITE;
     }
 
     public isRegular(type: BlockType): boolean {

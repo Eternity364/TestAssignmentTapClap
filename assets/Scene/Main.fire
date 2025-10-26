@@ -920,9 +920,9 @@
     "blockType": 0,
     "color": {
       "__type__": "cc.Color",
-      "r": 58,
-      "g": 189,
-      "b": 35,
+      "r": 57,
+      "g": 255,
+      "b": 22,
       "a": 255
     }
   },
@@ -931,9 +931,9 @@
     "blockType": 1,
     "color": {
       "__type__": "cc.Color",
-      "r": 89,
-      "g": 8,
-      "b": 169,
+      "r": 154,
+      "g": 51,
+      "b": 255,
       "a": 255
     }
   },
@@ -942,9 +942,9 @@
     "blockType": 2,
     "color": {
       "__type__": "cc.Color",
-      "r": 238,
-      "g": 45,
-      "b": 69,
+      "r": 245,
+      "g": 2,
+      "b": 32,
       "a": 255
     }
   },
@@ -953,10 +953,10 @@
     "blockType": 3,
     "color": {
       "__type__": "cc.Color",
-      "r": 242,
-      "g": 157,
-      "b": 0,
-      "a": 255
+      "r": 251,
+      "g": 255,
+      "b": 17,
+      "a": 248
     }
   },
   {
@@ -1375,7 +1375,13 @@
     "statisticsPanel": {
       "__id__": 35
     },
+    "blockFactory": {
+      "__id__": 15
+    },
     "targetPoints": 30000,
+    "pointsTextPrefab": {
+      "__uuid__": "77a75938-e1d1-4b0d-8393-653a94e5657f"
+    },
     "_id": "87AUzbcYdDMZ4EHt60m9n/"
   },
   {

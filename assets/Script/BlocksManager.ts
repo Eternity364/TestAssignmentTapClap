@@ -184,7 +184,9 @@ export default class BlockManager extends cc.Component {
     }
 
     private destroyBlockInCell(cell: Cell) {
-        this.pointsController.Increase(cell.getBlock().blockType);
+        const localPos = this.grid.getCellPosition(this.grid.getCellCoords(cell).y, this.grid.getCellCoords(cell).x);
+        const worldPos = this.grid.getParent().convertToWorldSpaceAR(localPos);
+        this.pointsController.Increase(cell.getBlock().blockType, worldPos);
         cell.setBlock(null);
     }
 
