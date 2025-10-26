@@ -10,6 +10,7 @@ export default class Bomb implements Booster {
     private explosionRadius: number = 2;
 
     public Execute(
+        activatedByTap: boolean,
         block: BoosterBlock,
         startCell: Cell,
         grid: Grid,

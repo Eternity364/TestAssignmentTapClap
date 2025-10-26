@@ -154,9 +154,10 @@ export default class BlockManager extends cc.Component {
         //return BlockType.RocketsHorizontal;
     }
 
-    private executeBooster(boosterBlock: BoosterBlock, cell: Cell) {
+    private executeBooster(boosterBlock: BoosterBlock, cell: Cell, activatedByTap: boolean = false) {
         this.lockGrid(1);
         boosterBlock.executeBooster(
+            activatedByTap,
             cell,
             this.grid,
             (cell) => this.tryToDestroyBlockInCell(cell),
@@ -166,7 +167,7 @@ export default class BlockManager extends cc.Component {
         );
     }
 
-    private tryToDestroyBlockInCell(cell: Cell) {
+    private tryToDestroyBlockInCell(cell: Cell, activatedByTap: boolean = false) {
         const block: Block = cell.getBlock();
 
         if (!block) return;
@@ -178,7 +179,7 @@ export default class BlockManager extends cc.Component {
         this.destroyBlockInCell(cell);
         const isBooster = !this.blockFactory.isRegular(block.blockType);
         if (isBooster) {
-            this.executeBooster(block as BoosterBlock, cell);
+            this.executeBooster(block as BoosterBlock, cell, activatedByTap);
         }
     }
 
@@ -191,7 +192,7 @@ export default class BlockManager extends cc.Component {
         const block: Block = cell.getBlock();
         const isBooster = block && !this.blockFactory.isRegular(block.blockType);
         if (isBooster) {
-            this.tryToDestroyBlockInCell(cell);
+            this.tryToDestroyBlockInCell(cell, true);
             this.turnsController.Increment();
         }
         return isBooster;

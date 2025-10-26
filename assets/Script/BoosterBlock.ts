@@ -15,12 +15,13 @@ export default abstract class BoosterBlock extends Block {
     } 
 
     public executeBooster(
+        activatedByTap: boolean,
         startCell: Cell,
         grid: Grid,
         TryToDestroyBlockInCell: DestroyBlockInCell,
         OnFinish: VoidCallback
     ) 
     {
-        this.booster.Execute(this, startCell, grid, TryToDestroyBlockInCell, OnFinish);
+        this.booster.Execute(activatedByTap, this, startCell, grid, TryToDestroyBlockInCell, OnFinish);
     }
 }

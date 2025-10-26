@@ -12,6 +12,7 @@ export default class MegaBombBooster implements Booster {
     private animationPrefab: cc.Prefab = null;
 
     public Execute(
+        activatedByTap: boolean,
         block: BoosterBlock,
         startCell: Cell,
         grid: Grid,
